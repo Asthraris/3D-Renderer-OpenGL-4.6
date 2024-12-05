@@ -1,0 +1,15 @@
+# Build & intermediates
+build/
+cmake-build-debug/
+
+# Editors & IDEs
+.idea/
+Debug
+include
+lib
+.vscode
+.vs
+# MacOS
+.DS_Store
+*.vcxproj.user
+glad.c
