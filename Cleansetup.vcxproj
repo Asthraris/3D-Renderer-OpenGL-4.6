@@ -147,9 +147,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CmakeLists.txt" />
+    <None Include="x64\Debug\Cleansetup.exe" />
+    <None Include="x64\Debug\Cleansetup.pdb" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
