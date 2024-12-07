@@ -12,6 +12,15 @@ static unsigned int CompileShader(unsigned int type, const std::string& sourceCo
 
 static unsigned int ShaderSource(); 
 	
+static bool ErrorLog() {
+	GLenum error = glGetError();
+	//fetch error and store for further use
+	if (error != GL_NO_ERROR) {
+		std::cout << "User-Error Log - 0x" << error << "\n";
+		return true;
+	}
+	else return false;
+}
 
 int main() {
 
@@ -24,6 +33,9 @@ int main() {
 
 	GLFWwindow* window = glfwCreateWindow(1080, 720, "WHAt THE Fuck", NULL, NULL);
 	//creates window of size with 1st null value shouws to fullscreen or not , 2nd is mystery
+	
+	//glfwSwapInterval(1);
+	//used for FrameLimit
 
 	glfwMakeContextCurrent(window);
 	//make our all context region to screen
@@ -41,7 +53,7 @@ int main() {
 		0.0f, 0.5f, 0.0f,
 		0.5f, 0.0f, 0.0f,
 		-0.5f, -0.5f, 0.0f,
-		0.5f,0.5f,0.0f,
+		0.7f,0.7f,0.0f,
 		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
 	};
 
@@ -81,21 +93,35 @@ int main() {
 	glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,sizeof(float)*3,(void *)0);
 	//is func me buffer kaha se read karna hai , ek processed dat ka size kya hai here 3xyz POS , normalized karna hai ya nhi(-1:1) , strike = steps for next data , void ptr ko act as cursur for gpu
 
-	
-	glUseProgram(ShaderSource());
+	unsigned int Shader = ShaderSource();
+	glUseProgram(Shader);
 	//ye func iscode ko batata hai ki ye shader use karo
 	
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	//specifys clear colour remember not background collor but main colour of window
+
+
+	float initial_color = 0.0f;
+	float increament ;
+	//takes location of gpu stored variable that is her vec4 by checking name of var
+	int U_color = glGetUniformLocation(Shader, "U_color");
+	glUniform4f(U_color,initial_color, 0.0f, 1-initial_color, 1.0f);
+	//defines value on run time
+
 
 	while (!glfwWindowShouldClose(window)) {
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		glBindVertexArray(vertexArrayScript);
 
+
+		//Just for Show
+		if (initial_color >= 1)increament = -  0.0005;
+		else if (initial_color <= 0)increament=0.0005;
+		initial_color += increament;
+		glUniform4f(U_color, initial_color, 0.5f, 1-initial_color, 1.0f);
+
 		glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
-
-
 
 		userInput(window);
 
@@ -103,11 +129,17 @@ int main() {
 		//swaps loaded buffer with present buffer
 		glfwPollEvents();
 		//works to detect changes in window 
-
+		if (ErrorLog())break;
 	}
 	glfwTerminate();
 	return 0;
 }
+
+
+
+
+
+
 
 void userInput(GLFWwindow* window) {
 	
@@ -122,16 +154,22 @@ void resize_window(GLFWwindow* window, int WIDTH, int HEIGHT)
 unsigned int CreateShader(const std::string& vertexSh, const std::string& fragmentSh)
 {
 	unsigned int shaderPack = glCreateProgram();
+	// isme shaderpack naam ka program craete hoga that gpu ill execute eact time
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexSh);
 	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentSh);
+	//ye mera func hai to copy souce into shader as type and store them in Uint
 
 	glAttachShader(shaderPack, vs);
 	glAttachShader(shaderPack, fs);
+	//ye dono ke ek me jode ga bc gpu me ek program h send karte hai hum
 	glLinkProgram(shaderPack);
+	//link  matlab ab hum is shader ki baat karenge abse
 	glValidateProgram(shaderPack);
+	
 
 	glDeleteShader(vs);
 	glDeleteShader(fs);
+	//temp shader string ko delete kiya 
 
 	return shaderPack;
 }
@@ -140,8 +178,11 @@ unsigned int CompileShader(unsigned int type, const std::string& sourceCode)
 {
 	unsigned int ShaderId = glCreateShader(type);
 	const char* src = sourceCode.c_str();
+	// ye func sikhna hoga -converts string and returns first pointer loaction od str
 	glShaderSource(ShaderId, 1, &src, nullptr);
+	//shaderid ke location me ye string paste karo
 	glCompileShader(ShaderId);
+	//comiple karo that shader is correct or not
 
 	//error handling entire copy of Cherno
 
@@ -152,7 +193,7 @@ unsigned int CompileShader(unsigned int type, const std::string& sourceCode)
 		glGetShaderiv(ShaderId, GL_INFO_LOG_LENGTH, &length);
 		char* errorMSG = (char*) alloca(length * sizeof(char));
 		glGetShaderInfoLog(ShaderId,length,&length,errorMSG);
-		std::cout << "Error : " << ( type == GL_VERTEX_SHADER? "Vertex Shader":"Fragment Shader" ) << ": " << errorMSG << "\n";
+		std::cout << "User-Error : " << ( type == GL_VERTEX_SHADER? "Vertex Shader":"Fragment Shader" ) << ": " << errorMSG << "\n";
 		glDeleteShader(ShaderId);
 		return 0;
 	}
@@ -171,8 +212,9 @@ unsigned int ShaderSource()
 	std::string fragmentShader =
 		"#version 330 core							\n"
 		"layout(location = 0 ) out vec4 color;		\n"
+		"uniform vec4 U_color;						\n"			
 		"void main(){								\n"
-		"	color = vec4(1.0,0.0,0.0,0.5);			\n"
+		"	color = U_color;			\n"
 		"}											\n";
 
 	unsigned int shader = CreateShader(vertexShader, fragmentShader);
