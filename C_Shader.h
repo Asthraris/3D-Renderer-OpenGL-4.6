@@ -11,12 +11,12 @@ public:
 	std::string VertShaderSource;
 
 	C_Shader();
-	~C_Shader();
 	
 	bool ErrorCheck(unsigned int type, unsigned int ShaderId);
-	
-
+	std::string loadShaderSource(const std::string& filepath);
+	void activate();
 	unsigned int CreateShader();
 	unsigned int CompileShader(unsigned int type, const std::string& sourceCode);
+	void revoke();
 };
 

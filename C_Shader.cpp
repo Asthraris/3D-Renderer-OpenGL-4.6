@@ -3,30 +3,18 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
+#include <fstream>
+#include <sstream>
 
 
 C_Shader::C_Shader()
 {	
-	VertShaderSource =
-		"#version 330 core							\n"
-		"layout(location = 0 ) in vec4 position;	\n"
-		"void main(){								\n"
-		"	gl_Position = position;					\n"
-		"}											\n";
-	FragShaderSource =
-		"#version 330 core							\n"
-		"layout(location = 0 ) out vec4 color;		\n"
-		"uniform vec4 U_color;						\n"
-		"void main(){								\n"
-		"	color = U_color;			\n"
-		"}											\n";
+	VertShaderSource = loadShaderSource("Shader.vert");
+	FragShaderSource = loadShaderSource("Shader.frag");
 
 	GPUcode = CreateShader();
 }
-C_Shader::~C_Shader()
-{
-	glDeleteProgram(GPUcode);
-}
+//throws error if compliation is wrong
 bool C_Shader::ErrorCheck(unsigned int type,unsigned int ShaderId)
 {
 	int result;
@@ -36,14 +24,20 @@ bool C_Shader::ErrorCheck(unsigned int type,unsigned int ShaderId)
 		glGetShaderiv(ShaderId, GL_INFO_LOG_LENGTH, &length);
 		char* errorMSG = (char*)alloca(length * sizeof(char));
 		glGetShaderInfoLog(ShaderId, length, &length, errorMSG);
-		std::cout << "User-Error : " << (type == GL_VERTEX_SHADER ? "Vertex Shader" : "Fragment Shader") << ": " << errorMSG << "\n";
+		std::cout << "Shader-Error : " << (type == GL_VERTEX_SHADER ? "Vertex Shader" : "Fragment Shader") << ": " << errorMSG << "\n";
 		glDeleteShader(ShaderId);
 		return false;
 	}
 	return true;
 }
 
+//use loaded shader for GPU
+void C_Shader::activate()
+{
+	glUseProgram(GPUcode);
+}
 
+//creates a program for gpu to run
 unsigned int C_Shader::CreateShader()
 {
 	unsigned int shaderPack = glCreateProgram();
@@ -67,6 +61,7 @@ unsigned int C_Shader::CreateShader()
 	return shaderPack;
 }
 
+//successfully compile program in human lang to machine for gpu and return its id
 unsigned int C_Shader::CompileShader(unsigned int type, const std::string& sourceCode)
 {
 	unsigned int ShaderId = glCreateShader(type);
@@ -82,6 +77,26 @@ unsigned int C_Shader::CompileShader(unsigned int type, const std::string& sourc
 	
 
 	 return ErrorCheck(type, ShaderId) ?  ShaderId:  NULL;
+}
+
+
+// Function to load shader code from a file
+std::string C_Shader::loadShaderSource(const std::string& filepath) {
+	std::ifstream file(filepath); // Open the file
+	if (!file.is_open()) {
+		throw std::runtime_error("Failed to open shader file: " + filepath);
+	}
+
+	std::stringstream buffer;
+	buffer << file.rdbuf(); // Read the file into the buffer
+	file.close();
+	return buffer.str(); // Return the file contents as a string
+}
+
+void C_Shader::revoke()
+{
+	glDeleteProgram(GPUcode);
+
 }
 
 

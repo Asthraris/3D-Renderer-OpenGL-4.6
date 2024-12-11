@@ -1,8 +1,8 @@
-#include "C_VertexBuffer.h"
+#include "C_Buffer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-C_VertexBuffer::C_VertexBuffer()
+C_Buffer::C_Buffer()
 {
 	vertexBufferScript = 0 ;
 	vertexIndexedScript = 0;
@@ -11,17 +11,9 @@ C_VertexBuffer::C_VertexBuffer()
 	// vertex array make opengl remenber this buffer data aka verticles format so we dont have to specify every time the gpu loads in while loop hence without this gpu will render only once traingle
 	glBindVertexArray(vertexArrayScript);
 }
-C_VertexBuffer::~C_VertexBuffer()
-{
-// Delete buffers before terminating GLFW
-	glDeleteBuffers(1, &vertexBufferScript);
-	glDeleteBuffers(1, &vertexIndexedScript);
 
-// Delete vertex array
-	glDeleteVertexArrays(1, &vertexArrayScript);
-}
 //for 3D data or 3point system
-void C_VertexBuffer::CreateIndexedBuffer(const float vertices[], const short Nvert, const unsigned int index[], const short Triangles)
+void C_Buffer::createBuffer(const float vertices[],short nVerts, const unsigned int index[], const short Triangles)
 {
 	//1 idhar no of buffer ke baare me hai
 	glGenBuffers(1, &vertexBufferScript);
@@ -29,7 +21,7 @@ void C_VertexBuffer::CreateIndexedBuffer(const float vertices[], const short Nve
 	//unsigned int  ke form me buffer ki loaction store hoti hai isliye hum %uint send karte hai to gen buffer
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferScript);
 	// jo buffer declare kiya uska type batate hai like array data hai ya indexed data hai
-	glBufferData(GL_ARRAY_BUFFER, (Nvert * 3) * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (nVerts* 6 )*sizeof(float), vertices, GL_STATIC_DRAW);
 	//buffer me jo data hai woh hum specify karte hai like
 	//array,kitne saare data fill karna hai in buffer, fir ye  data copy kaha se karna hai, or us data ka kaam kya hai
 
@@ -42,12 +34,27 @@ void C_VertexBuffer::CreateIndexedBuffer(const float vertices[], const short Nve
 	//weather its efficient this way
 }
 
-void C_VertexBuffer::linkvertArray()
-{
-	glEnableVertexAttribArray(0);
+
+//enable/vertex details default storey =0
+void C_Buffer::linkvertArray( unsigned short layer , short stroke, short offset,short start)	{
+	glEnableVertexAttribArray(layer);
+
+	
 	//ye gpu ke liye reading format of data allow karta hai ki hum gpu ko bataye 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+	glVertexAttribPointer(layer, stroke, GL_FLOAT, GL_FALSE, offset, (void*)(start*sizeof(float)));
 	//is func me buffer kaha se read karna hai , ek processed dat ka size ky
 	//a hai here 3xyz POS, normalized karna hai ya nhi(-1:1), strike = steps for next data, void ptr ko act as cursur for gpu
+}
+
+
+
+void C_Buffer::revoke()	{
+
+	// Delete buffers before terminating GLFW
+	glDeleteBuffers(1, &vertexBufferScript);
+	glDeleteBuffers(1, &vertexIndexedScript);
+
+	// Delete vertex array
+	glDeleteVertexArrays(1, &vertexArrayScript);
 }
 

@@ -138,19 +138,21 @@
     <ClInclude Include="dependencies\include\GLFW\glfw3native.h" />
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="C_Shader.h" />
-    <ClInclude Include="C_VertexBuffer.h" />
+    <ClInclude Include="C_Buffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C_Shader.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="C_VertexBuffer.cpp" />
+    <ClCompile Include="C_Buffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\glfw3.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="Shader.frag" />
+    <None Include="Shader.vert" />
     <None Include="x64\Debug\Cleansetup.exe" />
     <None Include="x64\Debug\Cleansetup.pdb" />
   </ItemGroup>
