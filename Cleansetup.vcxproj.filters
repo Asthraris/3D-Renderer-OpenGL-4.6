@@ -27,7 +27,7 @@
     <ClInclude Include="dependencies\include\KHR\khrplatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
+    <ClInclude Include="C_Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C_VertexBuffer.h">
@@ -41,7 +41,7 @@
     <ClCompile Include="glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
+    <ClCompile Include="C_Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C_VertexBuffer.cpp">
