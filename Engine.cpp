@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 
+
 Engine::Engine(unsigned int width, unsigned int height,const std::string& name)
 {	
 
@@ -41,6 +42,9 @@ Engine::Engine(unsigned int width, unsigned int height,const std::string& name)
 	// HINT
 	//glfwSetFramebufferSizeCallback(window, resize_window);
 
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	//specifys clear colour remember not background collor but main colour of window
+
 }
 
 Engine::~Engine()
@@ -48,85 +52,8 @@ Engine::~Engine()
 	glfwTerminate();
 }
 
-void Engine::process()
-{
-	const float vertices[] = {
-		0.0f, 0.5f, 0.0f,
-		0.5f, 0.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f,
-		0.7f,0.7f,0.0f,
-		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
-	};
-
-	unsigned int IndexedVertices[] = {
-		0,1,2,0,3,1,
-	};
 
 
-	glGenVertexArrays(1, &vertexArrayScript);
-	// vertex array make opengl remenber this buffer data aka verticles format so we dont have to specify every time the gpu loads in while loop hence without this gpu will render only once traingle
-	glBindVertexArray(vertexArrayScript);
-
-
-	//Buffer is just block of raw data which can be passed to Gpu
-	//unsigned int  ke form me buffer ki loaction store hoti hai isliye hum %uint send karte hai to gen buffer
-	glGenBuffers(1, &vertexBufferScript);
-	//1 idhar no of buffer ke baare me hai
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferScript);
-	// jo buffer declare kiya uska type batate hai like array data hai ya indexed data hai
-	glBufferData(GL_ARRAY_BUFFER, (4 * 3) * sizeof(float), vertices, GL_STATIC_DRAW);
-	//buffer me jo data hai woh hum specify karte hai like
-	//array,kitne saare data fill karna hai in buffer, fir ye  data copy kaha se karna hai, or us data ka kaam kya hai
-
-
-	glGenBuffers(1, &vertexIndexedScript);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexIndexedScript);
-	// GL_ELEMENT_ARRAY_BUFFER ek enum hai for letting gpu know its not raw data but index
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, (2 * 3) * sizeof(unsigned int), IndexedVertices, GL_STATIC_DRAW);
-	//yaha par humne ek new buffer create kiya to send index of vertecies dont know about the space complexity stuff 
-	//weather its efficient this way
-
-
-	glEnableVertexAttribArray(0);
-	//ye gpu ke liye reading format of data allow karta hai ki hum gpu ko bataye 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
-		//is func me buffer kaha se read karna hai , ek processed dat ka size ky
-	//a hai here 3xyz POS, normalized karna hai ya nhi(-1:1), strike = steps for next data, void ptr ko act as cursur for gpu
-	linkShader();
-	Shader = CreateShader(VertShader,FragShader);
-	glUseProgram(Shader);
-
-	float initial_color = 0.5f;
-	//takes location of gpu stored variable that is her vec4 by checking name of var
-	int U_color = glGetUniformLocation(Shader, "U_color");
-	glUniform4f(U_color, initial_color, 0.0f, 1 - initial_color, 1.0f);
-}
-
-void Engine::run()
-{
-
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-	//specifys clear colour remember not background collor but main colour of window
-
-	while (!glfwWindowShouldClose(window)) {
-
-		glClear(GL_COLOR_BUFFER_BIT);
-		glBindVertexArray(vertexArrayScript);
-
-
-		
-
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
-
-		userInput();
-
-		glfwSwapBuffers(window);
-		//swaps loaded buffer with present buffer
-		glfwPollEvents();
-		//works to detect changes in window 
-
-	}
-}
 
 void Engine::linkShader()
 {
@@ -212,14 +139,6 @@ unsigned int Engine::CompileShader(unsigned int type, const std::string& sourceC
 
 void Engine::terminate()
 {
-	// Delete buffers before terminating GLFW
-	glDeleteBuffers(1, &vertexBufferScript);
-	glDeleteBuffers(1, &vertexIndexedScript);
-
-	// Delete vertex array
-	glDeleteVertexArrays(1, &vertexArrayScript);
-
-
 	if (Shader) {
 		glDeleteProgram(Shader); // Delete shader program
 	}
