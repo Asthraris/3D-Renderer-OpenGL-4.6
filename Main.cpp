@@ -4,21 +4,21 @@
 #include<GLFW/glfw3.h>
 #include<iostream>
 	
-const short int WIDTH = 1080;
-const short HEIGHT = 720;
+const short int WIDTH = 480;
+const short HEIGHT = 480;
 const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
 
 const float vertices[] = {
 	// points || Color || Position
-		0.0f ,  0.5f , 0.0f ,	 0.0f ,  1.0f,  0.0f ,
-		0.5f ,  0.0f , 0.0f ,	 1.0f ,  0.0f,  0.0f ,
-		-0.5f, -0.5f , 0.0f ,	 0.0f ,  0.0f,  1.0f ,
-		0.7f ,  0.7f , 0.0f ,	 1.0f ,  1.0f,  1.0f ,
+		-1.0f ,  1.0f , 0.0f ,	 0.0f ,  1.0f,  0.0f ,
+		-1.0f ,  -1.0f , 0.0f ,	 1.0f ,  0.0f,  0.0f ,
+		1.0f, -1.0f , 0.0f ,	 0.0f ,  0.0f,  1.0f ,
+		1.0f ,  1.0f , 0.0f ,	 1.0f ,  1.0f,  1.0f ,
 		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
 };
 
 unsigned int IndexedVertices[] = {
-	0,1,2,0,3,1,
+	0,1,2,0,3,2,
 };
 
 bool ErrorLog();
