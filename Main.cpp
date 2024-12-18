@@ -2,6 +2,8 @@
 #include "C_Buffer.h"
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
+#include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
 #include<iostream>
 	
 const short int WIDTH = 480;
@@ -10,27 +12,42 @@ const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
 
 const float vertices[] = {
 	// points || Color || Position
-		-1.0f ,  1.0f , 0.0f ,	 0.0f ,  1.0f,  0.0f ,
-		-1.0f ,  -1.0f , 0.0f ,	 1.0f ,  0.0f,  0.0f ,
-		1.0f, -1.0f , 0.0f ,	 0.0f ,  0.0f,  1.0f ,
-		1.0f ,  1.0f , 0.0f ,	 1.0f ,  1.0f,  1.0f ,
+		-0.8f ,  0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
+		-0.8f , -0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
+		 0.8f , -0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
+		 0.8f ,  0.0f , 0.0f ,	 0.2f ,  0.0f,  0.2f ,
+		 0.5f , -0.5f ,-1.0f ,	 0.9f ,  0.2f,  0.0f ,
 		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
+	//ab gl enable depth kitya toh z axis use kar payenge 
+	// imp -> near to us [-1] far most [1]
 };
-
+short TOTALPOINTS = sizeof(vertices) / sizeof(vertices[0]);
 unsigned int IndexedVertices[] = {
-	0,1,2,0,3,2,
+	0,1,2,
+	0,3,2,
+	0,3,4,
+
 };
+short TOTALTRIANGLES = (sizeof(IndexedVertices) / sizeof(IndexedVertices[0])) / 3 ;
 
 bool ErrorLog();
 void UserInput(GLFWwindow* window);
 
 int main() {
+	float CURR_TIME , PREV_TIME =0;
+	float DELTA_TIME;
+	float FPS;
+
+
+
 
 	if (!glfwInit()) {
 		std::cout<<"Failed to initialize GLFW \n";
 	}
 
 	//specify to show which gl version is we using and core or waht level
+	//core me humko khud array buffer banana hota hai
+	//default me compactible mode par hota hai usme vao khud banta hai
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -39,7 +56,7 @@ int main() {
 	GLFWwindow *Apple = glfwCreateWindow(WIDTH, HEIGHT, "crimeMaster GOGO", nullptr, nullptr);
 	if (!Apple) {
 		glfwTerminate();
-		std::runtime_error("Failed to create GLFW window");
+		std::cout<<"Failed to create GLFW window \n";
 	}
 
 	//used for FrameLimit
@@ -55,22 +72,25 @@ int main() {
 	}
 
 	glViewport(0, 0, WIDTH, HEIGHT);
+	glEnable(GL_DEPTH_TEST);
 
 	//step2 - make window size responsive
 	// HINT
-	//glfwSetFramebufferSizeCallback(window, resize_window);
+	//glfwSetFramebufferSizeCallback(Apple, resize_window);
 
 	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
 	//specifys clear colour remember not background collor but main colour of window
 
 	
 	C_Buffer cache;
-	cache.createBuffer(vertices,4, IndexedVertices, 2);
+	cache.createBuffer(vertices, TOTALPOINTS , IndexedVertices , TOTALTRIANGLES);
+	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	cache.linkvertArray(0,3,6*sizeof(float),0); //for vertices
 	cache.linkvertArray(1,3,6*sizeof(float),3); //for color
 	
 	C_Shader newShader;
 	newShader.activate();
+
 
 	//float initial_color = 0.5f;
 	////takes location of gpu stored variable that is her vec4 by checking name of var
@@ -80,21 +100,28 @@ int main() {
 	//}
 	//glUniform4f(U_color, initial_color, 0.0f, 1 - initial_color, 1.0f);
 
-	
-
 
 	while (!glfwWindowShouldClose(Apple)) {
+		CURR_TIME = glfwGetTime();
+		DELTA_TIME = CURR_TIME - PREV_TIME;
+		FPS = 1 / DELTA_TIME;
+		std::cout << FPS << "\n" ;
 
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
+		
 		glBindVertexArray(cache.vertexArrayScript);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
 		UserInput(Apple);
 		glfwPollEvents();
-		if (ErrorLog()) { std::cerr << "An OpenGL error occurred!" << std::endl; }
+		if (ErrorLog())  std::cout << "An OpenGL error occurred!  \n " ; 
+
+		PREV_TIME = CURR_TIME;
+
 	}
 	glfwDestroyWindow(Apple);
 	cache.revoke();
@@ -107,6 +134,7 @@ int main() {
 void UserInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
+
 bool ErrorLog() {
 	GLenum error = glGetError();
 	//fetch error and store for further use

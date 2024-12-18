@@ -36,12 +36,12 @@ void C_Buffer::createBuffer(const float vertices[],short nVerts, const unsigned 
 
 
 //enable/vertex details default storey =0
-void C_Buffer::linkvertArray( unsigned short layer , short stroke, short offset,short start)	{
-	glEnableVertexAttribArray(layer);
+void C_Buffer::linkvertArray( unsigned short page , short sweep, short gap,short start)	{
+	glEnableVertexAttribArray(page);
 
 	
 	//ye gpu ke liye reading format of data allow karta hai ki hum gpu ko bataye 
-	glVertexAttribPointer(layer, stroke, GL_FLOAT, GL_FALSE, offset, (void*)(start*sizeof(float)));
+	glVertexAttribPointer(page, sweep, GL_FLOAT, GL_FALSE, gap, (void*)(start*sizeof(float)));
 	//is func me buffer kaha se read karna hai , ek processed dat ka size ky
 	//a hai here 3xyz POS, normalized karna hai ya nhi(-1:1), strike = steps for next data, void ptr ko act as cursur for gpu
 }
