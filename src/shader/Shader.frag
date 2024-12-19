@@ -1,11 +1,8 @@
-#version 330 core							
+#version 430 core
 
-layout(location = 0 ) out vec4 PixelCOLOR;		
+in vec3 vertexColor;  // Input from vertex shader
+out vec4 FragColor;   // Output to the framebuffer
 
-in vec3 pixColor;
-
-//uniform vec4 U_color;						
-
-void main(){								
-	PixelCOLOR = vec4(pixColor,1.0);			
-}											
+void main() {
+    FragColor = vec4(vertexColor, 1.0);  // Output the color with full opacity (alpha = 1.0)
+}

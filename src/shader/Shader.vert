@@ -1,15 +1,11 @@
-#version 330 core		
+#version 430 core
 
-//since i m using 3 cartesiaon plane
-//layout means vertex array papges on page 0 i have stred positions and page 1 i have stored color value  for now 
+layout(location = 0) in vec3 aPos;   // Position attribute
+layout(location = 1) in vec3 aColor; // Color attribute
 
+out vec3 vertexColor;  // Output to fragment shader
 
-layout(location = 0 ) in vec3 Tripoints;
-layout(location = 1 ) in vec3 Color;
-											
-out  vec3 pixColor;
-																						
-void main(){								
-	gl_Position = vec4( Tripoints , 1.0f );	
-	pixColor = Color;
-}										
+void main() {
+    gl_Position = vec4(aPos, 1.0);  // Directly pass the position to gl_Position
+    vertexColor = aColor;           // Pass the color to the fragment shader
+}

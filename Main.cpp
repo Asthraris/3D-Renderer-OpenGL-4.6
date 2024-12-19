@@ -1,62 +1,26 @@
-#include "C_Shader.h"
-#include "C_Buffer.h"
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
-
 #include<iostream>
+#include "C_Shader.h"
+#include "C_Buffer.h"
+#include "src/shapeDATA.h"
+#include "genShape.h"
 	
 const short int WINDOW_WIDTH = 480;
 const short WINDOW_HEIGHT = 480;
 const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
-struct VECTOR {
-	float x, y, z;
-};
-	
-struct VERTEX {
-	VECTOR POS;
-	VECTOR COLOR;
-};
-
-VERTEX vertices[] = {
-	// points || Color || Position
-		-0.8f ,  0.8f , 0.0f ,
-		0.6f ,  0.0f,  0.0f ,
-
-		-0.8f , -0.8f , 0.0f ,
-		0.6f ,  0.0f,  0.0f ,
-
-		 0.8f , -0.8f , 0.0f ,	
-		 0.6f ,  0.0f,  0.0f ,
-
-		 0.8f ,  0.0f , 0.0f ,	
-		 0.2f ,  0.0f,  0.2f ,
-
-		 0.5f , -0.5f ,-1.0f ,	
-		 0.9f ,  0.2f,  0.0f ,
-		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
-	//ab gl enable depth kitya toh z axis use kar payenge 
-	// imp -> near to us [-1] far most [1]
-};
-short TOTALPOINTS = sizeof(vertices) / sizeof(*vertices);
-unsigned int IndexedVertices[] = {
-	0,1,2,
-	0,3,2,
-	0,3,4,
-
-};
-short TOTALTRIANGLES = (sizeof(IndexedVertices) / sizeof(*IndexedVertices)) / 3 ;
 
 
 bool ErrorLog();
 void UserInput(GLFWwindow* window);
 
+
+
 int main() {
 	float CURR_TIME , PREV_TIME =0;
 	float DELTA_TIME;
 	float FPS;
-	glm::vec3 aman = glm::vec3(1.0f);
-
 
 
 	if (!glfwInit()) {
@@ -99,38 +63,28 @@ int main() {
 	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
 	//specifys clear colour remember not background collor but main colour of window
 
+	shapeDATA tri = genShape::genTRIANGLE();
 	
 	C_Buffer cache;
-	cache.createBuffer(vertices, TOTALPOINTS , IndexedVertices , TOTALTRIANGLES);
+	cache.parseBuffer(tri);
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
-	cache.linkvertArray(0,3,6*sizeof(float),0); //for vertices
-	cache.linkvertArray(1,3,6*sizeof(float),3); //for color
 	
 	C_Shader newShader;
 	newShader.activate();
-
-
-	//float initial_color = 0.5f;
-	////takes location of gpu stored variable that is her vec4 by checking name of var
-	//int U_color = glGetUniformLocation(newShader.GPUcode, "U_color");
-	//if (U_color == -1) {
-	//	std::cout << "Failed to find uniform location for 'U_color'  \n ";
-	//}
-	//glUniform4f(U_color, initial_color, 0.0f, 1 - initial_color, 1.0f);
 
 
 	while (!glfwWindowShouldClose(Apple)) {
 		CURR_TIME = glfwGetTime();
 		DELTA_TIME = CURR_TIME - PREV_TIME;
 		FPS = 1 / DELTA_TIME;
-		std::cout << vertices[1].POS.x << "\n" ;
+		//std::cout << FPS << "\n" ;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
 		
 		glBindVertexArray(cache.vertexArrayScript);
 
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+		glDrawElements(GL_TRIANGLES, tri.NUM_INDEXES, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
@@ -142,7 +96,7 @@ int main() {
 
 	}
 	glfwDestroyWindow(Apple);
-	cache.revoke();
+	cache.clean();
 	newShader.revoke();
 
 	glfwTerminate();

@@ -139,9 +139,12 @@
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="C_Shader.h" />
     <ClInclude Include="C_Buffer.h" />
+    <ClInclude Include="genShape.h" />
+    <ClInclude Include="src\shapeDATA.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="C_Shader.cpp" />
+    <ClCompile Include="genShape.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="C_Buffer.cpp" />
