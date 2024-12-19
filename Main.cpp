@@ -3,32 +3,50 @@
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
-#include<glm/gtc/matrix_transform.hpp>
+
 #include<iostream>
 	
-const short int WIDTH = 480;
-const short HEIGHT = 480;
+const short int WINDOW_WIDTH = 480;
+const short WINDOW_HEIGHT = 480;
 const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
+struct VECTOR {
+	float x, y, z;
+};
+	
+struct VERTEX {
+	VECTOR POS;
+	VECTOR COLOR;
+};
 
-const float vertices[] = {
+VERTEX vertices[] = {
 	// points || Color || Position
-		-0.8f ,  0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
-		-0.8f , -0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
-		 0.8f , -0.8f , 0.0f ,	 0.6f ,  0.0f,  0.0f ,
-		 0.8f ,  0.0f , 0.0f ,	 0.2f ,  0.0f,  0.2f ,
-		 0.5f , -0.5f ,-1.0f ,	 0.9f ,  0.2f,  0.0f ,
+		-0.8f ,  0.8f , 0.0f ,
+		0.6f ,  0.0f,  0.0f ,
+
+		-0.8f , -0.8f , 0.0f ,
+		0.6f ,  0.0f,  0.0f ,
+
+		 0.8f , -0.8f , 0.0f ,	
+		 0.6f ,  0.0f,  0.0f ,
+
+		 0.8f ,  0.0f , 0.0f ,	
+		 0.2f ,  0.0f,  0.2f ,
+
+		 0.5f , -0.5f ,-1.0f ,	
+		 0.9f ,  0.2f,  0.0f ,
 		// ab baar baar points ko redeclare karke space kyu use kare ab hum indexed buffer use karenge 
 	//ab gl enable depth kitya toh z axis use kar payenge 
 	// imp -> near to us [-1] far most [1]
 };
-short TOTALPOINTS = sizeof(vertices) / sizeof(vertices[0]);
+short TOTALPOINTS = sizeof(vertices) / sizeof(*vertices);
 unsigned int IndexedVertices[] = {
 	0,1,2,
 	0,3,2,
 	0,3,4,
 
 };
-short TOTALTRIANGLES = (sizeof(IndexedVertices) / sizeof(IndexedVertices[0])) / 3 ;
+short TOTALTRIANGLES = (sizeof(IndexedVertices) / sizeof(*IndexedVertices)) / 3 ;
+
 
 bool ErrorLog();
 void UserInput(GLFWwindow* window);
@@ -37,7 +55,7 @@ int main() {
 	float CURR_TIME , PREV_TIME =0;
 	float DELTA_TIME;
 	float FPS;
-
+	glm::vec3 aman = glm::vec3(1.0f);
 
 
 
@@ -53,7 +71,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	//creates window of size with 1st null value shouws to fullscreen or not , 2nd is mystery
-	GLFWwindow *Apple = glfwCreateWindow(WIDTH, HEIGHT, "crimeMaster GOGO", nullptr, nullptr);
+	GLFWwindow *Apple = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "crimeMaster GOGO", nullptr, nullptr);
 	if (!Apple) {
 		glfwTerminate();
 		std::cout<<"Failed to create GLFW window \n";
@@ -71,7 +89,7 @@ int main() {
 		std::cout<<"Failed to initialize GLAD";
 	}
 
-	glViewport(0, 0, WIDTH, HEIGHT);
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
 
 	//step2 - make window size responsive
@@ -105,7 +123,7 @@ int main() {
 		CURR_TIME = glfwGetTime();
 		DELTA_TIME = CURR_TIME - PREV_TIME;
 		FPS = 1 / DELTA_TIME;
-		std::cout << FPS << "\n" ;
+		std::cout << vertices[1].POS.x << "\n" ;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top

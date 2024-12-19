@@ -9,8 +9,8 @@
 
 C_Shader::C_Shader()
 {	
-	VertShaderSource = loadShaderSource("Shader.vert");
-	FragShaderSource = loadShaderSource("Shader.frag");
+	VertShaderSource = loadShaderSource("src/shader/Shader.vert");
+	FragShaderSource = loadShaderSource("src/shader/Shader.frag");
 
 	GPUcode = CreateShader();
 }

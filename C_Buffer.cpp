@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+
 C_Buffer::C_Buffer()
 {
 	vertexBufferScript = 0 ;
@@ -13,7 +14,7 @@ C_Buffer::C_Buffer()
 }
 
 //for 3D data or 3point system
-void C_Buffer::createBuffer(const float vertices[],short nVerts, const unsigned int index[], const short Triangles)
+void C_Buffer::createBuffer(const VERTEX vertices[],short nVerts, const unsigned int index[], const short Triangles)
 {
 	//1 idhar no of buffer ke baare me hai
 	glGenBuffers(1, &vertexBufferScript);

@@ -151,8 +151,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="Shader.frag" />
-    <None Include="Shader.vert" />
+    <None Include="src\shader\Shader.frag" />
+    <None Include="src\shader\Shader.vert" />
     <None Include="x64\Debug\Cleansetup.exe" />
     <None Include="x64\Debug\Cleansetup.pdb" />
   </ItemGroup>

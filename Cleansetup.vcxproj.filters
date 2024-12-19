@@ -55,7 +55,7 @@
     <None Include=".gitignore" />
     <None Include="x64\Debug\Cleansetup.exe" />
     <None Include="x64\Debug\Cleansetup.pdb" />
-    <None Include="Shader.vert" />
-    <None Include="Shader.frag" />
+    <None Include="src\shader\Shader.vert" />
+    <None Include="src\shader\Shader.frag" />
   </ItemGroup>
 </Project>
