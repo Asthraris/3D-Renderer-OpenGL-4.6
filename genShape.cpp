@@ -27,3 +27,57 @@ void genShape::deleteShapeData(shapeDATA& data)
     data.NUM_INDEXES = 0;
  
 }
+
+shapeDATA genShape::genSQUARE()
+{
+    shapeDATA sqr;
+    sqr.vertices = new VERTEX[4]{
+        {glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},  
+        {glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},  
+        {glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
+        {glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f)},    
+    };
+    sqr.NUM_POINTS = 4;
+    sqr.indexes = new unsigned int [6] {0, 1, 2,0, 2,3};
+    sqr.NUM_INDEXES = 6;
+    return sqr;
+}
+
+shapeDATA genShape::genCUBE()
+{
+    shapeDATA cub;
+    cub.vertices = new VERTEX[8]{
+        {glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
+        {glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+        {glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
+        {glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0f, 1.0f, 1.0f)},
+
+        {glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
+        {glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
+        {glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
+        {glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 1.0f)},
+    };
+    cub.NUM_POINTS = 8;
+    cub.indexes = new unsigned int [36] {
+            0,1,2,
+            0,2,3,
+
+            4,5,1,
+            4,1,0,
+
+            3,2,6,
+            3,6,7,
+
+            4,0,3,
+            4,3,7,
+
+            5,1,2,
+            5,2,6,
+
+            7,6,5,
+            7,5,4,
+        };
+    cub.NUM_INDEXES = 36;
+    return cub;
+}
+

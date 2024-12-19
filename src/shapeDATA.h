@@ -17,7 +17,7 @@ struct shapeDATA
 		return NUM_POINTS * sizeof(VERTEX);
 	}
 	int INDsize() const{
-		return NUM_INDEXES * sizeof(unsigned int);
+		return NUM_INDEXES * sizeof( unsigned int);
 	}
 	int VERTEX_SIZE()const {
 		return sizeof(VERTEX);

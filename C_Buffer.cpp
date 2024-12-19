@@ -38,7 +38,7 @@ void C_Buffer::parseBuffer(const shapeDATA & shapedata )
 	glEnableVertexAttribArray(1);
 
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,shapedata.VERTEX_SIZE(), (void*)offsetof(VERTEX, COLOR));
-	//ye link karta hai color ko 
+	//yaaha 3 no of float values in one vec denote karta hai
 
 	glGenBuffers(1, &vertexIndexedScript);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vertexIndexedScript);
@@ -46,9 +46,6 @@ void C_Buffer::parseBuffer(const shapeDATA & shapedata )
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapedata.INDsize(), shapedata.indexes, GL_STATIC_DRAW);
 	//yaha par humne ek new buffer create kiya to send index of vertecies dont know about the space complexity stuff 
 	//weather its efficient this way
-
-	
-
 }
 
 

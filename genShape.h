@@ -1,10 +1,12 @@
 #pragma once
-class shapeDATA;
+struct shapeDATA;
 class genShape
 {
 public:
-	static shapeDATA genTRIANGLE();
     static void deleteShapeData(shapeDATA& data);
+	static shapeDATA genTRIANGLE();
+    static shapeDATA genSQUARE();
+    static shapeDATA genCUBE();
     
 
 };

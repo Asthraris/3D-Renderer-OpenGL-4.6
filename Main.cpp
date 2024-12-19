@@ -13,9 +13,7 @@ const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
 
 
 bool ErrorLog();
-void UserInput(GLFWwindow* window);
-
-
+void UserInput(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 int main() {
 	float CURR_TIME , PREV_TIME =0;
@@ -63,16 +61,16 @@ int main() {
 	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
 	//specifys clear colour remember not background collor but main colour of window
 
-	shapeDATA tri = genShape::genTRIANGLE();
+	shapeDATA mess = genShape::genCUBE();
 	
 	C_Buffer cache;
-	cache.parseBuffer(tri);
+	cache.parseBuffer(mess);
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
 	C_Shader newShader;
 	newShader.activate();
 
-
+	glfwSetKeyCallback(Apple,UserInput);
 	while (!glfwWindowShouldClose(Apple)) {
 		CURR_TIME = glfwGetTime();
 		DELTA_TIME = CURR_TIME - PREV_TIME;
@@ -84,11 +82,10 @@ int main() {
 		
 		glBindVertexArray(cache.vertexArrayScript);
 
-		glDrawElements(GL_TRIANGLES, tri.NUM_INDEXES, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+		glDrawElements(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
-		UserInput(Apple);
 		glfwPollEvents();
 		if (ErrorLog())  std::cout << "An OpenGL error occurred!  \n " ; 
 
@@ -103,8 +100,8 @@ int main() {
 	return 0;
 }
 
-void UserInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+void UserInput(GLFWwindow* window , int key ,int scancode , int action ,int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)glfwSetWindowShouldClose(window, true);
 }
 
 bool ErrorLog() {
