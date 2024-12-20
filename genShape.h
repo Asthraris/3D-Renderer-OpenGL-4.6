@@ -7,7 +7,6 @@ public:
 	static shapeDATA genTRIANGLE();
     static shapeDATA genSQUARE();
     static shapeDATA genCUBE();
-    
-
+ 
 };
 

@@ -1,30 +1,50 @@
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include<glm/gtc/type_ptr.hpp>
 #include<iostream>
 #include "C_Shader.h"
 #include "C_Buffer.h"
 #include "src/shapeDATA.h"
 #include "genShape.h"
 	
-const short int WINDOW_WIDTH = 480;
-const short WINDOW_HEIGHT = 480;
+float WINDOW_WIDTH = 480;
+float WINDOW_HEIGHT = 480;
 const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
 
-
+float fpsCOUNTER() {
+	static float last_time = 0.0f;
+	float curr_time = glfwGetTime();
+	float fps = curr_time - last_time;
+	fps = 1 / fps;
+	last_time = curr_time;
+	return fps;
+	// yaha fps mene dynamically nikala easier way bhi hai
+}
+float Z_CHANGE=5.0f;
+void processINPUTS(GLFWwindow * window);
 bool ErrorLog();
-void UserInput(GLFWwindow* window, int key, int scancode, int action, int mods);
+void pollInput(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+void window_resizer(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+	WINDOW_HEIGHT = height;
+	WINDOW_WIDTH = width;
+}
 
 int main() {
-	float CURR_TIME , PREV_TIME =0;
-	float DELTA_TIME;
+	
 	float FPS;
+	short INPUT_DELAY = 0;
 
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = glm::mat4(1.0f);
+	glm::mat4 projection = glm::mat4(1.0f);
 
 	if (!glfwInit()) {
 		std::cout<<"Failed to initialize GLFW \n";
 	}
-
 	//specify to show which gl version is we using and core or waht level
 	//core me humko khud array buffer banana hota hai
 	//default me compactible mode par hota hai usme vao khud banta hai
@@ -51,12 +71,7 @@ int main() {
 		std::cout<<"Failed to initialize GLAD";
 	}
 
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
-
-	//step2 - make window size responsive
-	// HINT
-	//glfwSetFramebufferSizeCallback(Apple, resize_window);
 
 	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
 	//specifys clear colour remember not background collor but main colour of window
@@ -70,16 +85,36 @@ int main() {
 	C_Shader newShader;
 	newShader.activate();
 
-	glfwSetKeyCallback(Apple,UserInput);
+
+	int viewLOC = glGetUniformLocation(newShader.GPUcode, "view");
+	int modeLOC = glGetUniformLocation(newShader.GPUcode, "model");
+	int projLOC = glGetUniformLocation(newShader.GPUcode, "projection");
+
+	glUniformMatrix4fv(modeLOC, 1, GL_FALSE, glm::value_ptr(model));
+	glfwSetFramebufferSizeCallback(Apple, window_resizer);
+		
+		//viewport is the region where opengl will draw
+		//0,0 is the bottom left corner of window
+		//width and height is the size of window
+
+	glfwSetKeyCallback(Apple,pollInput);
 	while (!glfwWindowShouldClose(Apple)) {
-		CURR_TIME = glfwGetTime();
-		DELTA_TIME = CURR_TIME - PREV_TIME;
-		FPS = 1 / DELTA_TIME;
-		//std::cout << FPS << "\n" ;
+
+		FPS = fpsCOUNTER();
+		std::cout << FPS << "\n";
+		
+		if (INPUT_DELAY >= 60) { processINPUTS(Apple); INPUT_DELAY = 0; }
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
-		
+		view = glm::mat4(1.0f);
+		view = glm::translate(view , glm::vec3(0.0f , 0.0f, -(Z_CHANGE)));
+		glUniformMatrix4fv(viewLOC, 1, GL_FALSE, glm::value_ptr(view));
+		// baar baar mat ko 1.0 par set karna padta hai kyuki nhi maalum
+		model = glm::mat4(1.0f);
+		projection = glm::perspective(glm::radians(60.0f) , (float)(WINDOW_WIDTH/WINDOW_HEIGHT) , 0.1f , 10.f);
+		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
+
 		glBindVertexArray(cache.vertexArrayScript);
 
 		glDrawElements(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
@@ -89,8 +124,7 @@ int main() {
 		glfwPollEvents();
 		if (ErrorLog())  std::cout << "An OpenGL error occurred!  \n " ; 
 
-		PREV_TIME = CURR_TIME;
-
+		INPUT_DELAY += 1;
 	}
 	glfwDestroyWindow(Apple);
 	cache.clean();
@@ -100,8 +134,15 @@ int main() {
 	return 0;
 }
 
-void UserInput(GLFWwindow* window , int key ,int scancode , int action ,int mods) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)glfwSetWindowShouldClose(window, true);
+void pollInput(GLFWwindow* window , int key ,int scancode , int action ,int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+}
+
+void processINPUTS(GLFWwindow* window)
+{
+	//yaha par mene change boht kam kiya hai par end me mujhe ye func ke call acc to fps set karna hai
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)Z_CHANGE -= 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)Z_CHANGE += 0.05f;
 }
 
 bool ErrorLog() {
