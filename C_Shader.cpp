@@ -35,6 +35,14 @@ bool C_Shader::ErrorCheck(unsigned int type,unsigned int ShaderId)
 void C_Shader::activate()
 {
 	glUseProgram(GPUcode);
+
+	GLint success;
+	glGetProgramiv(GPUcode, GL_LINK_STATUS, &success);
+	if (!success) {
+		char infoLog[512];
+		glGetProgramInfoLog(GPUcode, 512, nullptr, infoLog);
+		std::cout << "Shader Linking Error: " << infoLog << "\n";
+	}
 }
 
 //creates a program for gpu to run

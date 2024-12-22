@@ -15,7 +15,7 @@ shapeDATA genShape::genTRIANGLE()
     ret.indexes = new unsigned int[3] {0, 1, 2};
 
     ret.NUM_INDEXES = 3;
-
+    ret.ModelMatrix = glm::mat4(1.0f);
     return ret;
 }
 
@@ -40,6 +40,7 @@ shapeDATA genShape::genSQUARE()
     sqr.NUM_POINTS = 4;
     sqr.indexes = new unsigned int [6] {0, 1, 2,0, 2,3};
     sqr.NUM_INDEXES = 6;
+    sqr.ModelMatrix = glm::mat4(1.0f);
     return sqr;
 }
 
@@ -78,6 +79,8 @@ shapeDATA genShape::genCUBE()
             7,5,4,
         };
     cub.NUM_INDEXES = 36;
+    cub.ModelMatrix = glm::mat4(1.0f);
+
     return cub;
 }
 
