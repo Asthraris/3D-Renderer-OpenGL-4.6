@@ -98,7 +98,7 @@ int main() {
 	if (viewLOC == -1) std::cout << "Error: viewMatrix uniform not found.\n";
 	if (projLOC == -1) std::cout << "Error: projectionMatrix uniform not found.\n";
 
-	projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
+	projection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
 	// for projection of 3d to 2d mostly remain unchanged
 
 
@@ -126,7 +126,7 @@ int main() {
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
 
 		projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
+		projection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
 		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
 		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
 		view = glm::mat4(1.f);
