@@ -12,6 +12,8 @@
 int WINDOW_WIDTH = 480;
 int WINDOW_HEIGHT = 480;
 
+float Z_CHANGE = 5.0f;
+
 const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
 
 double fpsCOUNTER() {
@@ -119,7 +121,7 @@ int main() {
 		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
 		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
 		view = glm::mat4(1.f);
-		view = glm::translate(view , glm::vec3(0.0f, 0.0f , -10.0f));
+		view = glm::translate(view , glm::vec3(0.0f, 0.0f , -Z_CHANGE));
 		glUniformMatrix4fv(viewLOC, 1, GL_FALSE, glm::value_ptr(view));
 
 
@@ -148,8 +150,8 @@ void pollInput(GLFWwindow* window , int key ,int scancode , int action ,int mods
 void processINPUTS(GLFWwindow* window)
 {
 	//yaha par mene change boht kam kiya hai par end me mujhe ye func ke call acc to fps set karna hai
-	/*if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);*/
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)Z_CHANGE += 0.05f;
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)Z_CHANGE -= 0.05f;
 }
 
 bool ErrorLog() {

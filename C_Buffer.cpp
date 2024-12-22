@@ -68,12 +68,12 @@ void C_Buffer::makeInstances( shapeDATA& shapedata)
 	shapedata.ModelMatrix = glm::mat4(1.0f);
 	shapedata.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	//shapedata.setRotation(glm::radians(0.785f), glm::vec3(0.0f, 0.0f, 1.0f));
-	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 5.0f));
+	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	InstanceData.push_back(shapedata.getModel());
 	shapedata.ModelMatrix = glm::mat4(1.0f);
 	shapedata.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	//shapedata.setRotation(glm::radians(1.57f), glm::vec3(0.0f, 1.0f, 0.0f));
-	shapedata.setPosition(glm::vec3(1.2f, 0.0f, 8.0f));
+	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	InstanceData.push_back(shapedata.getModel());
 }
 
