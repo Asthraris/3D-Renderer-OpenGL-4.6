@@ -9,6 +9,7 @@
 #include "src/shapeDATA.h"
 #include "genShape.h"
 	
+//#include <glm/gtx/string_cast.hpp>
 int WINDOW_WIDTH = 480;
 int WINDOW_HEIGHT = 480;
 
@@ -89,12 +90,21 @@ int main() {
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
 	C_Shader newShader;
+	newShader.activate();
 	
 
 	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "viewMatrix");
 	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projectionMatrix");
-	
+	if (viewLOC == -1) std::cout << "Error: viewMatrix uniform not found.\n";
+	if (projLOC == -1) std::cout << "Error: projectionMatrix uniform not found.\n";
+
+	projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
 	// for projection of 3d to 2d mostly remain unchanged
+
+
+	/*std::cout << "Projection Matrix:\n" << glm::to_string(projection) << "\n";
+	std::cout << "View Matrix:\n" << glm::to_string(view) << "\n";*/
+
 	
 	// projection mat remains constain throughout program
 
@@ -114,10 +124,9 @@ int main() {
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
-		newShader.activate();
 
 		projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(60.0f), (float)(WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
 		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
 		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
 		view = glm::mat4(1.f);

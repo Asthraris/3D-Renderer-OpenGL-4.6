@@ -1,8 +1,10 @@
 #include "C_Buffer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include "src/shapeDATA.h"
 
+//#include <glm/gtx/string_cast.hpp>
 
 
 C_Buffer::C_Buffer() :vertexBufferID(0), vertexIndexedID(0) , instancedBufferID(0)
@@ -45,11 +47,13 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,shapedata.VERTEX_SIZE(), (void*)offsetof(VERTEX, COLOR));
 	//yaaha 3 no of float values in one vec denote karta hai
-
+	/*for (const auto& mat : InstanceData) {
+		std::cout << glm::to_string(mat) << std::endl;
+	}*/
 	for (int i = 2; i <= 5; i++)
 	{
 		glEnableVertexAttribArray(i);
-		glVertexAttribPointer( i , 4 , GL_FLOAT , GL_FALSE , sizeof(float) *16 , (void*)(sizeof(float) * (i - 2) * 4));
+		glVertexAttribPointer( i , 4 , GL_FLOAT , GL_FALSE , sizeof(glm::mat4), (void*)(sizeof(glm::vec3) * (i - 2)));
 		// 4 beacuse 4 float jauenge as vec4  and sizeof mat 4 is 64 bytes since im sending only one matrix stride is not much use
 		glVertexAttribDivisor(i, 1);
 	}
@@ -67,13 +71,13 @@ void C_Buffer::makeInstances( shapeDATA& shapedata)
 {
 	shapedata.ModelMatrix = glm::mat4(1.0f);
 	shapedata.setScale(glm::vec3(0.6f, 0.6f, 0.6f));
-	shapedata.setRotation(glm::radians(60.0f), glm::vec3(1.0f, 1.7f, 0.0f));
+	shapedata.setRotation(glm::radians(60.0f), glm::vec3(1.0f, 0.7f, 0.0f));
 	shapedata.setPosition(glm::vec3(1.0f, 0.0f, -3.0f));
 	InstanceData.push_back(shapedata.getModel());
 	shapedata.ModelMatrix = glm::mat4(1.0f);
 	shapedata.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
-	shapedata.setRotation(glm::radians(46.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	shapedata.setRotation(glm::radians(60.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shapedata.setPosition(glm::vec3(1.0f, 1.0f, 1.0f));
 	InstanceData.push_back(shapedata.getModel());
 }
 

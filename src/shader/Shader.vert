@@ -10,6 +10,6 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 
 void main() {
-    gl_Position = projectionMatrix *viewMatrix *ModelMatrix * vec4(aPos, 1.0);  // Directly pass the position to gl_Position
+    gl_Position = projectionMatrix *viewMatrix *ModelMatrix* vec4(aPos, 1.0);  // Directly pass the position to gl_Position
     vertexColor = aColor;                                       // Pass the color to the fragment shader
 }
