@@ -6,10 +6,10 @@ layout(location = 2) in mat4 ModelMatrix;
 
 out vec3 vertexColor;  // Output to fragment shader
 
-uniform mat4 projection;
-uniform mat4 view;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 void main() {
-    gl_Position = projection *view *ModelMatrix * vec4(aPos, 1.0);  // Directly pass the position to gl_Position
+    gl_Position = projectionMatrix *viewMatrix *ModelMatrix * vec4(aPos, 1.0);  // Directly pass the position to gl_Position
     vertexColor = aColor;                                       // Pass the color to the fragment shader
 }

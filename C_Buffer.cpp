@@ -32,7 +32,7 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 
 	glGenBuffers(1, &instancedBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
-	glBufferData(GL_ARRAY_BUFFER , InstanceData.size() * 64 , InstanceData.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER , InstanceData.size() * sizeof(glm::mat4), InstanceData.data(), GL_STATIC_DRAW);
 
 
 	glEnableVertexAttribArray(0);
@@ -66,13 +66,13 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 void C_Buffer::makeInstances( shapeDATA& shapedata)
 {
 	shapedata.ModelMatrix = glm::mat4(1.0f);
-	shapedata.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
-	//shapedata.setRotation(glm::radians(0.785f), glm::vec3(0.0f, 0.0f, 1.0f));
-	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	shapedata.setScale(glm::vec3(0.6f, 0.6f, 0.6f));
+	shapedata.setRotation(glm::radians(60.0f), glm::vec3(1.0f, 1.7f, 0.0f));
+	shapedata.setPosition(glm::vec3(1.0f, 0.0f, -3.0f));
 	InstanceData.push_back(shapedata.getModel());
 	shapedata.ModelMatrix = glm::mat4(1.0f);
 	shapedata.setScale(glm::vec3(1.0f, 1.0f, 1.0f));
-	//shapedata.setRotation(glm::radians(1.57f), glm::vec3(0.0f, 1.0f, 0.0f));
+	shapedata.setRotation(glm::radians(46.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	shapedata.setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	InstanceData.push_back(shapedata.getModel());
 }

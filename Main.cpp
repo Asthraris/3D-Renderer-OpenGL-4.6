@@ -79,7 +79,7 @@ int main() {
 	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
 	//specifys clear colour remember not background collor but main colour of window
 
-	shapeDATA mess = genShape::genSQUARE();
+	shapeDATA mess = genShape::genCUBE();
 	
 
 	
@@ -91,8 +91,8 @@ int main() {
 	C_Shader newShader;
 	
 
-	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "view");
-	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projection");
+	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "viewMatrix");
+	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projectionMatrix");
 	
 	// for projection of 3d to 2d mostly remain unchanged
 	

@@ -8,7 +8,7 @@ struct VERTEX {
 
 struct shapeDATA
 {
-	shapeDATA(): vertices(0) , NUM_POINTS(0) , indexes(0) , NUM_INDEXES(0) { }
+	shapeDATA(): vertices(0) , NUM_POINTS(0) , indexes(0) , NUM_INDEXES(0) , ModelMatrix(1.0f){ }
 	VERTEX* vertices;
 	unsigned int NUM_POINTS;
 	unsigned int* indexes;
