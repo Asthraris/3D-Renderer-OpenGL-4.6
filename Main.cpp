@@ -85,8 +85,11 @@ int main() {
 
 	
 	C_Buffer cache;
-	cache.makeInstances(mess);
 	cache.parseBuffer(mess);
+	cache.buildInstances(0.6f, 60.0f, glm::vec3(1.0f, 0.7f, 0.0f), glm::vec3(1.0f, 0.0f, -3.0f));
+	cache.buildInstances(1.0f, 30.0f, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+	cache.buildInstances(0.2f, 40.0f, glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(-3.0f, 0.0f, 0.0f));
+	cache.sendInstances();
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
 	C_Shader newShader;
@@ -98,8 +101,6 @@ int main() {
 	if (viewLOC == -1) std::cout << "Error: viewMatrix uniform not found.\n";
 	if (projLOC == -1) std::cout << "Error: projectionMatrix uniform not found.\n";
 
-	projection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
-	// for projection of 3d to 2d mostly remain unchanged
 
 
 	/*std::cout << "Projection Matrix:\n" << glm::to_string(projection) << "\n";
@@ -126,7 +127,7 @@ int main() {
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
 
 		projection = glm::mat4(1.0f);
-		projection = glm::perspective(60.0f, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 20.f);
 		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
 		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
 		view = glm::mat4(1.f);
@@ -135,7 +136,7 @@ int main() {
 
 
 		glBindVertexArray(cache.vertexArrayID);
-		glDrawElementsInstanced(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0 , 2);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+		glDrawElementsInstanced(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0 , 3);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
