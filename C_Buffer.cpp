@@ -1,6 +1,7 @@
 #include "C_Buffer.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include "src/shapeDATA.h"
 
@@ -13,6 +14,7 @@ C_Buffer::C_Buffer() :vertexBufferID(0), IndexedBufferID(0) , instancedBufferID(
 	glGenVertexArrays(1, &vertexArrayID);
 	// vertex array make opengl remenber this buffer data aka verticles format so we dont have to specify every time the gpu loads in while loop hence without this gpu will render only once traingle
 	glBindVertexArray(vertexArrayID);
+	//yaha professional log unbind kardede hai but mai kyuki Cubuffer iniatlize karke uske ki use karunga so no need
 }
 
 //for 3D data or 3point system
@@ -28,12 +30,6 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 	//buffer me jo data hai woh hum specify karte hai like
 	//array,kitne saare data fill karna hai in buffer, fir ye  data copy kaha se karna hai, or us data ka kaam kya hai
 
-
-
-
-
-
-
 	glEnableVertexAttribArray(0);
 	//ye gpu ke liye reading format of data allow karta hai ki hum gpu ko bataye 
 	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, shapedata.VERTEX_SIZE(), (void*)offsetof(VERTEX, POS));
@@ -43,26 +39,21 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,shapedata.VERTEX_SIZE(), (void*)offsetof(VERTEX, COLOR));
 	//yaaha 3 no of float values in one vec denote karta hai
-	/*for (const auto& mat : InstanceData) {
-		std::cout << glm::to_string(mat) << std::endl;
-	}*/
+
 	glGenBuffers(1, &IndexedBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexedBufferID);
 	// GL_ELEMENT_ARRAY_BUFFER ek enum hai for letting gpu know its not raw data but index
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapedata.INDsize(), shapedata.indexes, GL_STATIC_DRAW);
 	//yaha par humne ek new buffer create kiya to send index of vertecies dont know about the space complexity stuff 
 	//weather its efficient this way
-		
-	glGenBuffers(1, &instancedBufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
-	glBufferData(GL_ARRAY_BUFFER, InstanceData.size() * sizeof(glm::mat4), InstanceData.data(), GL_STATIC_DRAW);
-	//error mera isliye aaraha tha because i did vertexatrrib after binding indexed buffer remember to 
-	for (int i = 2; i <= 5 ; i++)
-	{
-		glEnableVertexAttribArray(i);
-		glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)((i-2)*sizeof(glm::vec4)));
-		glVertexAttribDivisor(i, 1);
-	}
+}
+
+
+//send first color for entire instance
+void C_Buffer::colorDivisor()
+{
+	glVertexAttribDivisor(1, 1);
+
 }
 
 void C_Buffer::createInstances(glm::mat4 demoModel)
@@ -104,9 +95,17 @@ void C_Buffer::deleteInstances(short index)
 	InstanceData.erase(InstanceData.begin() + index);
 }
 
+void C_Buffer::TRUNCATE()
+{
+	this->clearInstances();
+	glDeleteBuffers(1, &vertexBufferID);
+	glDeleteBuffers(1, &IndexedBufferID);
+	glDeleteBuffers(1, &instancedBufferID);
+}
 
 
-void C_Buffer::clean()	{
+
+void C_Buffer::DROP()	{
 
 	this->clearInstances();
 	// Delete buffers before terminating GLFW

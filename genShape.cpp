@@ -46,16 +46,17 @@ shapeDATA genShape::genCUBE()
 {
     shapeDATA cub;
     cub.vertices = new VERTEX[8]{
-        {glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
-        {glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
-        {glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
-        {glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0f, 1.0f, 1.0f)},
+    {glm::vec3(-1.0f, 1.0f, -1.0f), glm::vec3(1.0f, 0.5f, 0.5f)}, // Soft Red
+    {glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(0.5f, 1.0f, 0.5f)}, // Soft Green
+    {glm::vec3(1.0f, -1.0f, -1.0f), glm::vec3(0.5f, 0.5f, 1.0f)}, // Soft Blue
+    {glm::vec3(1.0f, 1.0f, -1.0f), glm::vec3(0.0f, 0.75f, 0.75f)}, // Soft Cyan
 
-        {glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
-        {glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
-        {glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
-        {glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 1.0f, 1.0f)},
+    {glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec3(0.7f, 0.2f, 0.2f)},   // Warm Red
+    {glm::vec3(-1.0f, -1.0f, 1.0f), glm::vec3(0.2f, 0.7f, 0.2f)},  // Warm Green
+    {glm::vec3(1.0f, -1.0f, 1.0f), glm::vec3(0.2f, 0.2f, 0.7f)},   // Warm Blue
+    {glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.6f, 0.4f, 0.5f)}     // Soft Purple
     };
+
     cub.NUM_POINTS = 8;
     cub.indexes = new unsigned int [36] {
             0,1,2,

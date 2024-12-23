@@ -8,6 +8,10 @@
 #include "C_Buffer.h"
 #include "src/shapeDATA.h"
 #include "genShape.h"
+
+#include <cstdlib>
+#include <ctime>
+
 	
 //#include <glm/gtx/string_cast.hpp>
 int WINDOW_WIDTH = 480;
@@ -82,13 +86,21 @@ int main() {
 
 	shapeDATA mess = genShape::genCUBE();
 	
-
-	
+	srand(time(0));
+	glm::mat4 temp;
+	int TOTAL_CUBES = 100;
 	C_Buffer cache;
 	cache.parseBuffer(mess);
-	cache.buildInstances(0.6f, 60.0f, glm::vec3(1.0f, 0.7f, 0.0f), glm::vec3(1.0f, 0.0f, -3.0f));
-	cache.buildInstances(1.0f, 30.0f, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-	cache.buildInstances(0.2f, 40.0f, glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(-3.0f, 0.0f, 0.0f));
+	//cache.colorDivisor();
+	for (int i = 0; i <TOTAL_CUBES ; i++)
+	{
+		temp = glm::mat4(1.0f);
+		temp = glm::scale(temp , glm::vec3(0.3f, 0.3f, 0.3f));
+		temp = glm::rotate(temp, glm::radians(float(rand() % 360)), glm::normalize(glm::vec3(float(rand() % 12), float(rand() % 12), float(rand() % 12))));
+		temp = glm::translate(temp, glm::vec3(float(rand() % 20 - 10), float(rand() % 20 - 10), float(rand() % 20 - 10)));
+		cache.createInstances(temp);
+	}
+	
 	cache.sendInstances();
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
@@ -98,28 +110,15 @@ int main() {
 
 	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "viewMatrix");
 	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projectionMatrix");
-	if (viewLOC == -1) std::cout << "Error: viewMatrix uniform not found.\n";
-	if (projLOC == -1) std::cout << "Error: projectionMatrix uniform not found.\n";
-
-
-
-	/*std::cout << "Projection Matrix:\n" << glm::to_string(projection) << "\n";
-	std::cout << "View Matrix:\n" << glm::to_string(view) << "\n";*/
-
 	
-	// projection mat remains constain throughout program
 
 	glfwSetFramebufferSizeCallback(Apple, window_resizer);
-		
-		//viewport is the region where opengl will draw
-		//0,0 is the bottom left corner of window
-		//width and height is the size of window
 
 	glfwSetKeyCallback(Apple,pollInput);
 	while (!glfwWindowShouldClose(Apple)) {
 
 		FPS = fpsCOUNTER();
-		//std::cout << FPS << "\n";
+		std::cout << FPS << "\n";
 		
 		if (INPUT_DELAY >= 60) { processINPUTS(Apple); INPUT_DELAY = 0; }
 
@@ -136,7 +135,7 @@ int main() {
 
 
 		glBindVertexArray(cache.vertexArrayID);
-		glDrawElementsInstanced(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0 , 3);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+		glDrawElementsInstanced(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0 , TOTAL_CUBES);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
@@ -146,7 +145,8 @@ int main() {
 		INPUT_DELAY += 1;
 	}
 	glfwDestroyWindow(Apple);
-	cache.clean();
+
+	cache.DROP();
 	newShader.revoke();
 
 	glfwTerminate();
