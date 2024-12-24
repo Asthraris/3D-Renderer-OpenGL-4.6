@@ -30,7 +30,7 @@
     <ClInclude Include="C_Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C_Buffer.h">
+    <ClInclude Include="vertARRAY.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\shapeDATA.h">
@@ -50,7 +50,7 @@
     <ClCompile Include="C_Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C_Buffer.cpp">
+    <ClCompile Include="vertARRAY.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="genShape.cpp">

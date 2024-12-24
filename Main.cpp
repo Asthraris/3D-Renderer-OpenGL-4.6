@@ -4,13 +4,13 @@
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<iostream>
+
 #include "C_Shader.h"
-#include "C_Buffer.h"
+#include "vertARRAY.h"
 #include "src/shapeDATA.h"
 #include "genShape.h"
 
-#include <cstdlib>
-#include <ctime>
+
 
 	
 //#include <glm/gtx/string_cast.hpp>
@@ -43,7 +43,7 @@ void window_resizer(GLFWwindow* window, int width, int height) {
 
 int main() {
 	
-	float FPS;
+	double FPS;
 	short INPUT_DELAY = 0;
 
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -86,27 +86,17 @@ int main() {
 
 	shapeDATA mess = genShape::genCUBE();
 	
-	srand(time(0));
-	glm::mat4 temp;
-	int TOTAL_CUBES = 100;
-	C_Buffer cache;
-	cache.parseBuffer(mess);
+	vertARRAY cache;
+	cache.buildGRID(5, 5, 1.0f);
 	//cache.colorDivisor();
-	for (int i = 0; i <TOTAL_CUBES ; i++)
-	{
-		temp = glm::mat4(1.0f);
-		temp = glm::scale(temp , glm::vec3(0.3f, 0.3f, 0.3f));
-		temp = glm::rotate(temp, glm::radians(float(rand() % 360)), glm::normalize(glm::vec3(float(rand() % 12), float(rand() % 12), float(rand() % 12))));
-		temp = glm::translate(temp, glm::vec3(float(rand() % 20 - 10), float(rand() % 20 - 10), float(rand() % 20 - 10)));
-		cache.createInstances(temp);
-	}
-	
+	cache.parseBuffer(mess);
 	cache.sendInstances();
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
 	C_Shader newShader;
 	newShader.activate();
 	
+
 
 	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "viewMatrix");
 	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projectionMatrix");
@@ -120,23 +110,21 @@ int main() {
 		FPS = fpsCOUNTER();
 		std::cout << FPS << "\n";
 		
-		if (INPUT_DELAY >= 60) { processINPUTS(Apple); INPUT_DELAY = 0; }
+		if (INPUT_DELAY >= 30) { processINPUTS(Apple); INPUT_DELAY = 0; }
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
 
 		projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 20.f);
+		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 10.f);
 		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
 		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
 		view = glm::mat4(1.f);
 		view = glm::translate(view , glm::vec3(0.0f, 0.0f , -Z_CHANGE));
 		glUniformMatrix4fv(viewLOC, 1, GL_FALSE, glm::value_ptr(view));
 
-
-		glBindVertexArray(cache.vertexArrayID);
-		glDrawElementsInstanced(GL_TRIANGLES, mess.NUM_INDEXES, GL_UNSIGNED_INT, 0 , TOTAL_CUBES);//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
-
+		cache.renderVertArray(mess);
+		
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
 		glfwPollEvents();

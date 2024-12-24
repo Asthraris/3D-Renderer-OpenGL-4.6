@@ -1,14 +1,18 @@
-#include "C_Buffer.h"
+#include "vertARRAY.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include <iostream>
 #include "src/shapeDATA.h"
 
+
+#include <cstdlib>
+#include <ctime>
+
+//#include <iostream>
 //#include <glm/gtx/string_cast.hpp>
 
 
-C_Buffer::C_Buffer() :vertexBufferID(0), IndexedBufferID(0) , instancedBufferID(0)
+vertARRAY::vertARRAY() :vertexBufferID(0), IndexedBufferID(0) , instancedBufferID(0)
 {
 
 	glGenVertexArrays(1, &vertexArrayID);
@@ -18,8 +22,8 @@ C_Buffer::C_Buffer() :vertexBufferID(0), IndexedBufferID(0) , instancedBufferID(
 }
 
 //for 3D data or 3point system
-void C_Buffer::parseBuffer(shapeDATA & shapedata )
-{	
+void vertARRAY::parseBuffer(shapeDATA & shapedata )
+{
 	//1 idhar no of buffer ke baare me hai
 	glGenBuffers(1, &vertexBufferID);
 	//Buffer is just block of raw data which can be passed to Gpu
@@ -46,22 +50,32 @@ void C_Buffer::parseBuffer(shapeDATA & shapedata )
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, shapedata.INDsize(), shapedata.indexes, GL_STATIC_DRAW);
 	//yaha par humne ek new buffer create kiya to send index of vertecies dont know about the space complexity stuff 
 	//weather its efficient this way
+
+	glBindVertexArray(0);
 }
 
 
 //send first color for entire instance
-void C_Buffer::colorDivisor()
+void vertARRAY::colorDivisor()
 {
 	glVertexAttribDivisor(1, 1);
 
 }
 
-void C_Buffer::createInstances(glm::mat4 demoModel)
+void vertARRAY::createInstances(glm::mat4 demoModel)
 {
 	InstanceData.push_back(demoModel);
 }
+void vertARRAY::buildGRID(int row, int coloum , float scale)
+{
+	for (int i = 0; i < row; i++) {
+		for (int j = 0; j < coloum; j++) {
+			this->buildInstances(scale, glm::vec3(float((-row / 2) + i), float((-coloum / 2) + j), 0.0f));
+		}
+	}
+}
 // build dynamically LIMITATION- Default Scale,Rotation , Translation lineup
-void C_Buffer::buildInstances(float scale , float DEGangle , glm::vec3 rotateAXis , glm::vec3 Position)
+void vertARRAY::buildROTATIONALInstances(float scale , float DEGangle , glm::vec3 rotateAXis , glm::vec3 Position)
 {
 	glm::mat4 temp = glm::mat4(1.0f);
 	temp = glm::scale(temp, glm::vec3(scale));
@@ -70,9 +84,42 @@ void C_Buffer::buildInstances(float scale , float DEGangle , glm::vec3 rotateAXi
 	InstanceData.push_back(temp);
 }
 
-
-void C_Buffer::sendInstances( )
+void vertARRAY::buildInstances(float scale, glm::vec3 Position)
 {
+	glm::mat4 temp = glm::mat4(1.0f);
+	temp = glm::scale(temp, glm::vec3(scale));
+	temp = glm::translate(temp, Position);
+	InstanceData.push_back(temp);
+}
+
+void vertARRAY::randomInstances(int numINT, float scale, int posMax)
+{
+	srand(time(NULL));
+
+	glm::mat4 temp;
+	for (int i = 0; i < numINT; i++)
+	{
+		temp = glm::mat4(1.0f);
+		temp = glm::scale(temp, glm::vec3(scale, scale, scale));
+		temp = glm::rotate(temp, glm::radians(float(rand() % 360)), glm::normalize(glm::vec3(float(rand() % 12), float(rand() % 12), float(rand() % 12))));
+		temp = glm::translate(temp, glm::vec3(float(rand() % (posMax * 2) - posMax), float(rand() % (posMax * 2) - posMax), float(rand() % (posMax * 2) - posMax)));
+		InstanceData.push_back(temp);
+	}
+}
+
+void vertARRAY::renderVertArray(shapeDATA& shapedata)
+{
+	glBindVertexArray(vertexArrayID);
+	glDrawElementsInstanced(GL_TRIANGLES, shapedata.NUM_INDEXES, GL_UNSIGNED_INT, 0, InstanceData.size());//drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
+
+	glBindVertexArray(0);
+}
+
+
+void vertARRAY::sendInstances( )
+{
+	glBindVertexArray(vertexArrayID);
+
 	glGenBuffers(1, &instancedBufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
 	glBufferData(GL_ARRAY_BUFFER, InstanceData.size() * sizeof(glm::mat4), InstanceData.data(), GL_STATIC_DRAW);
@@ -83,19 +130,21 @@ void C_Buffer::sendInstances( )
 		glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)((i - 2) * sizeof(glm::vec4)));
 		glVertexAttribDivisor(i, 1);
 	}
+
+	glBindVertexArray(0);
 }
 
-void C_Buffer::clearInstances()
+void vertARRAY::clearInstances()
 {
 	InstanceData.clear();
 }
 
-void C_Buffer::deleteInstances(short index)
+void vertARRAY::deleteInstances(short index)
 {
 	InstanceData.erase(InstanceData.begin() + index);
 }
 
-void C_Buffer::TRUNCATE()
+void vertARRAY::TRUNCATE()
 {
 	this->clearInstances();
 	glDeleteBuffers(1, &vertexBufferID);
@@ -105,7 +154,7 @@ void C_Buffer::TRUNCATE()
 
 
 
-void C_Buffer::DROP()	{
+void vertARRAY::DROP()	{
 
 	this->clearInstances();
 	// Delete buffers before terminating GLFW
