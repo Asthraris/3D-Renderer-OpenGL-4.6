@@ -10,7 +10,7 @@
 #include "src/shapeDATA.h"
 #include "genShape.h"
 
-
+#include "Camera.h"
 
 	
 //#include <glm/gtx/string_cast.hpp>
@@ -30,7 +30,6 @@ double fpsCOUNTER() {
 	return fps;
 	// yaha fps mene dynamically nikala easier way bhi hai
 }
-void processINPUTS(GLFWwindow * window);
 bool ErrorLog();
 void pollInput(GLFWwindow* window, int key, int scancode, int action, int mods);
 
@@ -38,13 +37,13 @@ void window_resizer(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 	WINDOW_HEIGHT = height;
 	WINDOW_WIDTH = width;
+	
 }
 
 
 int main() {
 	
 	double FPS;
-	short INPUT_DELAY = 0;
 
 	glm::mat4 projection = glm::mat4(1.0f);
 	glm::mat4 view = glm::mat4(1.0f);
@@ -93,36 +92,30 @@ int main() {
 	cache.sendInstances();
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
-	C_Shader newShader;
-	newShader.activate();
+	C_Shader myShader;
+	myShader.activate();
 	
-
-
-	unsigned int viewLOC = glGetUniformLocation(newShader.GPUcode, "viewMatrix");
-	unsigned int projLOC = glGetUniformLocation(newShader.GPUcode, "projectionMatrix");
-	
+	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 10.0f , myShader);
 
 	glfwSetFramebufferSizeCallback(Apple, window_resizer);
 
 	glfwSetKeyCallback(Apple,pollInput);
+	
 	while (!glfwWindowShouldClose(Apple)) {
 
 		FPS = fpsCOUNTER();
 		std::cout << FPS << "\n";
 		
-		if (INPUT_DELAY >= 30) { processINPUTS(Apple); INPUT_DELAY = 0; }
+		
+		dslr.CamInputs(Apple);
+		dslr.CamMouseMove(Apple);
+		
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
 
-		projection = glm::mat4(1.0f);
-		projection = glm::perspective(glm::radians(60.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 10.f);
-		glUniformMatrix4fv(projLOC, 1, GL_FALSE, glm::value_ptr(projection));
-		//projection matrix remains constant untill aspect ratio of window remains same , isliye send karna patda hai
-		view = glm::mat4(1.f);
-		view = glm::translate(view , glm::vec3(0.0f, 0.0f , -Z_CHANGE));
-		glUniformMatrix4fv(viewLOC, 1, GL_FALSE, glm::value_ptr(view));
-
+	
+		dslr.compMatrix();
 		cache.renderVertArray(mess);
 		
 		glfwSwapBuffers(Apple);
@@ -130,12 +123,11 @@ int main() {
 		glfwPollEvents();
 		if (ErrorLog())  std::cout << "An OpenGL error occurred!  \n " ; 
 
-		INPUT_DELAY += 1;
 	}
 	glfwDestroyWindow(Apple);
 
 	cache.DROP();
-	newShader.revoke();
+	myShader.revoke();
 
 	glfwTerminate();
 	return 0;
@@ -145,12 +137,7 @@ void pollInput(GLFWwindow* window , int key ,int scancode , int action ,int mods
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
 }
 
-void processINPUTS(GLFWwindow* window)
-{
-	//yaha par mene change boht kam kiya hai par end me mujhe ye func ke call acc to fps set karna hai
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)Z_CHANGE += 0.05f;
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)Z_CHANGE -= 0.05f;
-}
+
 
 bool ErrorLog() {
 	GLenum error = glGetError();
