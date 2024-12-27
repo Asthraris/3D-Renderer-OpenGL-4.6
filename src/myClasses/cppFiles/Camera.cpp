@@ -85,7 +85,6 @@ void Camera::CamMouseMove(GLFWwindow* window, double deltaTime)
 	float offsetX, offsetY;
 	//mistake 1 - not making yaw nas pitch static
 	static float yaw = -90.0f, pitch = 0.0f;
-	static glm::mat4  tempRotate;
 	glm::vec3 tempFocus;
 
 	glfwGetCursorPos(window, &Xpos, &Ypos);
