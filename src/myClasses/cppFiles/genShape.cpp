@@ -1,6 +1,6 @@
-#include "genShape.h"
+#include "../headers/genShape.h"
 #include <glm/glm.hpp>
-#include "src/shapeDATA.h"
+#include "../../utils/shapeDATA.h"
 
 
 //Update :  yaha par saare pos 1 se 0.5 kiya because cube ka size 2 unit horaha tha since 1 from both side

@@ -1,16 +1,14 @@
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
-#include<glm/gtc/matrix_transform.hpp>
-#include<glm/gtc/type_ptr.hpp>
 #include<iostream>
 
-#include "C_Shader.h"
-#include "vertARRAY.h"
-#include "src/shapeDATA.h"
-#include "genShape.h"
+#include "utils/shapeDATA.h"
+#include "myClasses/headers/C_Shader.h"
+#include "myClasses/headers/vertARRAY.h"
+#include "myClasses/headers/genShape.h"
+#include "myClasses/headers/Camera.h"
 
-#include "Camera.h"
 
 	
 //#include <glm/gtx/string_cast.hpp>
@@ -28,7 +26,9 @@ float timeCOUNTER() {
 	// yaha fps mene dynamically nikala easier way bhi hai
 }
 bool ErrorLog();
-void pollInput(GLFWwindow* window, int key, int scancode, int action, int mods);
+void pollInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
+}
 
 void window_resizer(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -131,9 +131,6 @@ int main() {
 	return 0;
 }
 
-void pollInput(GLFWwindow* window , int key ,int scancode , int action ,int mods) {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
-}
 
 
 

@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "../headers/Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <glm/gtc/type_ptr.hpp>
@@ -85,6 +85,7 @@ void Camera::CamMouseMove(GLFWwindow* window, double deltaTime)
 	float offsetX, offsetY;
 	//mistake 1 - not making yaw nas pitch static
 	static float yaw = -90.0f, pitch = 0.0f;
+	static glm::mat4  tempRotate;
 	glm::vec3 tempFocus;
 
 	glfwGetCursorPos(window, &Xpos, &Ypos);
@@ -111,7 +112,7 @@ void Camera::CamMouseMove(GLFWwindow* window, double deltaTime)
 	/*
 	agar y me topmost ans bottom most lock karna hotoh
 	*/
-
+	
 	tempFocus.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	tempFocus.y = sin(glm::radians(pitch));
 	tempFocus.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));

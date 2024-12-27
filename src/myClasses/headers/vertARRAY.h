@@ -1,7 +1,10 @@
 #pragma 
-#include "src/shapeDATA.h"
+
 #include <glm/glm.hpp>
 #include <vector>
+
+struct shapeDATA;
+
 class vertARRAY
 {
 private :

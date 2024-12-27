@@ -1,4 +1,4 @@
-#include "C_Shader.h"
+#include "../headers/C_Shader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
@@ -11,6 +11,7 @@ C_Shader::C_Shader()
 {	
 	VertShaderSource = loadShaderSource("src/shader/Shader.vert");
 	FragShaderSource = loadShaderSource("src/shader/Shader.frag");
+	//file path relative to solution folder not main folder
 
 	GPUcode = CreateShader();
 }

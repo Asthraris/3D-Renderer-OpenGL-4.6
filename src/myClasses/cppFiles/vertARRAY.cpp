@@ -1,8 +1,8 @@
-#include "vertARRAY.h"
+#include "../headers/vertARRAY.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
-#include "src/shapeDATA.h"
+#include "../../utils/shapeDATA.h"
 
 
 #include <cstdlib>
@@ -70,7 +70,9 @@ void vertARRAY::buildGRID(int row, int coloum , float scale)
 {
 	for (int i = 0; i < row; i++) {
 		for (int j = 0; j < coloum; j++) {
-			this->buildInstances(scale, glm::vec3(float((-row / 2) + i), float((-coloum / 2) + j), 0.0f));
+			float x = float((-row / 2) + i); 
+			float y = float((-coloum / 2) + j);
+			this->buildInstances(scale, glm::vec3( x ,  y, 0.0f ) );
 		}
 	}
 }
