@@ -9,7 +9,8 @@ class Camera
 public:
 	int winWidth, winHeight;
 	float FOV , nearPlane ,farPlane;
-	glm::mat4 projectionMatrix, ViewMatrix;
+	glm::mat4 projectionMatrix;
+	glm::mat4 ViewMatrix;
 
 	glm::vec3 UP ;
 	//axis of cameras up direction
@@ -23,10 +24,10 @@ public:
 
 
 	Camera(int width, int height, float fov, float nearplane, float farplane , C_Shader shader);
-	void CamInputs(GLFWwindow * window);
+	void CamInputs(GLFWwindow * window , float deltaTime);
 	void compMatrix();
 	void UpdateProjection(int width , int height);
-	void CamMouseMove(GLFWwindow *window );
+	void CamMouseMove(GLFWwindow *window  , double deltaTime);
 
 };
 

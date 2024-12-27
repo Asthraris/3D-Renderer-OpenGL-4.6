@@ -14,20 +14,17 @@
 
 	
 //#include <glm/gtx/string_cast.hpp>
-int WINDOW_WIDTH = 480;
-int WINDOW_HEIGHT = 480;
+int WINDOW_WIDTH = 1080;
+int WINDOW_HEIGHT = 720;
 
-float Z_CHANGE = 5.0f;
+glm::vec4 BGcolor = glm::vec4( 0.7f , 0.75f , 0.85f , 1.0f );
 
-const float BGcolor[4] = { 0.7f , 0.75f , 0.85f , 1.0f };
-
-double fpsCOUNTER() {
+float timeCOUNTER() {
 	static double last_time = 0.0f;
 	double curr_time = glfwGetTime();
-	double fps = curr_time - last_time;
-	fps = 1 / fps;
+	float dT = (float)(curr_time - last_time);
 	last_time = curr_time;
-	return fps;
+	return dT;
 	// yaha fps mene dynamically nikala easier way bhi hai
 }
 bool ErrorLog();
@@ -43,14 +40,11 @@ void window_resizer(GLFWwindow* window, int width, int height) {
 
 int main() {
 	
-	double FPS;
-
-	glm::mat4 projection = glm::mat4(1.0f);
-	glm::mat4 view = glm::mat4(1.0f);
-
+	double deltaTime;
 
 	if (!glfwInit()) {
 		std::cout<<"Failed to initialize GLFW \n";
+		return -1;
 	}
 	//specify to show which gl version is we using and core or waht level
 	//core me humko khud array buffer banana hota hai
@@ -64,6 +58,7 @@ int main() {
 	if (!Apple) {
 		glfwTerminate();
 		std::cout<<"Failed to create GLFW window \n";
+		return -2;
 	}
 
 	//used for FrameLimit
@@ -76,17 +71,17 @@ int main() {
 	//opengl provides some function in driver of gpu which i used by gpu but for us to use that func we need their address so glad gives us address of func if we dont use glad we need to use windows pointer to get func add.
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout<<"Failed to initialize GLAD";
+		return -3;
 	}
 	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	glEnable(GL_DEPTH_TEST);
-
-	glClearColor(BGcolor[0], BGcolor[1], BGcolor[2], BGcolor[3]);
+	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
 
 	shapeDATA mess = genShape::genCUBE();
 	
 	vertARRAY cache;
-	cache.buildGRID(5, 5, 1.0f);
+	cache.randomInstances(500, 0.5f, 20);
 	//cache.colorDivisor();
 	cache.parseBuffer(mess);
 	cache.sendInstances();
@@ -95,20 +90,23 @@ int main() {
 	C_Shader myShader;
 	myShader.activate();
 	
-	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 10.0f , myShader);
+	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 20.0f , myShader);
 
 	glfwSetFramebufferSizeCallback(Apple, window_resizer);
 
 	glfwSetKeyCallback(Apple,pollInput);
 	
+	glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//disable mouse to other window except opengl one
+
 	while (!glfwWindowShouldClose(Apple)) {
 
-		FPS = fpsCOUNTER();
-		std::cout << FPS << "\n";
+		deltaTime = timeCOUNTER();
+		std::cout << 1/deltaTime << "\n";
 		
 		
-		dslr.CamInputs(Apple);
-		dslr.CamMouseMove(Apple);
+		dslr.CamInputs(Apple, deltaTime);
+		dslr.CamMouseMove(Apple , deltaTime);
 		
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
