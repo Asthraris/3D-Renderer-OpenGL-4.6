@@ -22,12 +22,12 @@ Camera::Camera(int width, int height, float fov, float nearplane, float farplane
 	winHeight = height;
 	nearPlane = nearplane;
 	farPlane = farplane;
-	FOV = fov;
+	FOV = glm::radians(fov);
 	//ye deafault set karega
 	Speed = NORMAL_SPEED;
 	
 
-	projectionMatrix = glm::perspective(glm::radians(FOV), (float)winWidth / (float)winHeight, nearPlane, farPlane);
+	projectionMatrix = glm::perspective(FOV, (float)winWidth / (float)winHeight, nearPlane, farPlane);
 	finalMatLOCATION = glGetUniformLocation(shader.GPUcode, "finalMatrix");
 }
 
@@ -75,7 +75,7 @@ void Camera::UpdateProjection(int width, int height)
 {
 	projectionMatrix = glm::mat4(1.0f);
 
-	projectionMatrix = glm::perspective(glm::radians(FOV), (float)width / (float)height, nearPlane, farPlane);
+	projectionMatrix = glm::perspective(FOV, (float)width / (float)height, nearPlane, farPlane);
 }
 
 void Camera::CamMouseMove(GLFWwindow* window, double deltaTime)
