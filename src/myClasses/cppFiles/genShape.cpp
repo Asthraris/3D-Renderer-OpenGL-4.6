@@ -84,4 +84,25 @@ shapeDATA genShape::genCUBE()
 
     return cub;
 }
-
+shapeDATA genShape::genPYRAMID()
+{
+    shapeDATA pyr;
+    pyr.vertices =new VERTEX[5]{
+        {glm::vec3(0.5f,-0.5f,0.5f),glm::vec3(0.0f,0.0f,0.0f)},
+{glm::vec3(-0.5f,-0.5f,0.5f),glm::vec3(0.0f,0.0f,0.0f)},
+{glm::vec3(-0.5f,-0.5f,-0.5f),glm::vec3(0.0f,0.0f,0.0f)},
+{glm::vec3(0.5f,-0.5f,-0.5f),glm::vec3(0.0f,0.0f,0.0f)},
+{glm::vec3(0.0f,0.5f,0.0f),glm::vec3(0.0f,0.0f,0.0f)}
+    };
+pyr.NUM_POINTS =5;
+    pyr.indexes= new unsigned int[18]{
+        0,1,4,
+        1,2,4,
+        2,3,4,
+        0,1,3,
+        0,3,2,
+        1,3,4
+    };
+pyr.NUM_INDEXES =18;
+return pyr;
+}
