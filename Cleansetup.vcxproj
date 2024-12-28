@@ -137,19 +137,21 @@
     <ClInclude Include="dependencies\include\GLFW\glfw3.h" />
     <ClInclude Include="dependencies\include\GLFW\glfw3native.h" />
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
+    <ClInclude Include="dependencies\include\STB\stb_image.h" />
     <ClInclude Include="src\myClasses\headers\Camera.h" />
     <ClInclude Include="src\myClasses\headers\C_Shader.h" />
-    <ClInclude Include="src\myClasses\headers\genShape.h" />
+    <ClInclude Include="src\myClasses\headers\Entity.h" />
     <ClInclude Include="src\utils\shapeDATA.h" />
-    <ClInclude Include="src\myClasses\headers\vertARRAY.h" />
+    <ClInclude Include="src\myClasses\headers\Engine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\myClasses\cppFiles\Camera.cpp" />
     <ClCompile Include="src\myClasses\cppFiles\C_Shader.cpp" />
-    <ClCompile Include="src\myClasses\cppFiles\genShape.cpp" />
+    <ClCompile Include="src\myClasses\cppFiles\Entity.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\myClasses\cppFiles\vertARRAY.cpp" />
+    <ClCompile Include="src\myClasses\cppFiles\Engine.cpp" />
+    <ClCompile Include="src\utils\stb.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\glfw3.lib" />

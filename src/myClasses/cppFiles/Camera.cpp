@@ -6,7 +6,7 @@
 const float NORMAL_SPEED = 2.5f;
 const float MAXSPEED = 4.0f;
 const float Accelaration = 0.01f;
-const float SENSITIVITY = 120.0f;
+const float SENSITIVITY = 90.0f;
 	// ye sab config values hai 
 bool FIRST_MOVE = true;
 // jab humara window load hoat hai lab lastPos nhi hota is liye hum Fisrt _move boo bante hai since at staring it might cause error or disloaction
@@ -45,10 +45,10 @@ void Camera::CamInputs(GLFWwindow* window , float deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		Stand += Speed * glm::normalize(glm::cross(Focus,UP)) * deltaTime;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
 		Stand += Speed * UP * deltaTime;
 	}
-	if (glfwGetKey(window, GLFW_KEY_TAB) == GLFW_PRESS) {
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
 		Stand += Speed * (-UP) * deltaTime;
 	}
 	/*

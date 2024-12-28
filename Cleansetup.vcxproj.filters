@@ -33,13 +33,16 @@
     <ClInclude Include="src\myClasses\headers\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\myClasses\headers\genShape.h">
+    <ClInclude Include="src\myClasses\headers\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\myClasses\headers\vertARRAY.h">
+    <ClInclude Include="src\myClasses\headers\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\shapeDATA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dependencies\include\STB\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +53,7 @@
     <ClCompile Include="src\myClasses\cppFiles\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\myClasses\cppFiles\genShape.cpp">
+    <ClCompile Include="src\myClasses\cppFiles\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\glad.c">
@@ -59,7 +62,10 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\myClasses\cppFiles\vertARRAY.cpp">
+    <ClCompile Include="src\myClasses\cppFiles\Engine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\stb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

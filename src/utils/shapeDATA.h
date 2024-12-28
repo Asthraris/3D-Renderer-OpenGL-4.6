@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <vector>
 
 struct VERTEX {
 	glm::vec3 POS;
@@ -8,20 +9,29 @@ struct VERTEX {
 
 struct shapeDATA
 {
-	shapeDATA(): vertices(0) , NUM_POINTS(0) , indexes(0) , NUM_INDEXES(0) { }
+public:
+	shapeDATA() : vertices(0), NUM_POINTS(0), indexes(0), NUM_INDEXES(0) {};
 	VERTEX* vertices;
 	unsigned int NUM_POINTS;
 	unsigned int* indexes;
 	unsigned int NUM_INDEXES;
+	std::vector <glm::mat4> InstanceData;
 
-	int VERTsize() const{
+
+	int VERTsize() {
 		return NUM_POINTS * sizeof(VERTEX);
 	}
-	int INDsize() const{
-		return NUM_INDEXES * sizeof( unsigned int);
+		
+	int INDsize() {
+		return NUM_INDEXES * sizeof(unsigned int);
 	}
-	int VERTEX_SIZE()const {
+	int VERTEX_SIZE() {
 		return sizeof(VERTEX);
 	}
+	int sizeInstanceinBYTES(){
+		return InstanceData.size() * sizeof(glm::mat4);
+	}
+
+	
 	
 };

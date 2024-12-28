@@ -3,14 +3,17 @@
 #include<glm/glm.hpp>
 #include<iostream>
 
+
 #include "utils/shapeDATA.h"
 #include "myClasses/headers/C_Shader.h"
-#include "myClasses/headers/vertARRAY.h"
-#include "myClasses/headers/genShape.h"
+#include "myClasses/headers/Engine.h"
+#include "myClasses/headers/Entity.h"
 #include "myClasses/headers/Camera.h"
 
+#include <vector>
+// ab mujhe ek hi vertexArray me multiple shapes store karna hai because switching vertearray is tedius
 
-	
+
 //#include <glm/gtx/string_cast.hpp>
 int WINDOW_WIDTH = 1080;
 int WINDOW_HEIGHT = 720;
@@ -61,6 +64,8 @@ int main() {
 		return -2;
 	}
 
+	std::vector <shapeDATA> MESS;
+
 	//used for FrameLimit
 	//glfwSwapInterval(1);
 
@@ -78,14 +83,15 @@ int main() {
 	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
 
-	shapeDATA mess = genShape::genCUBE();
-	
-	vertARRAY cache;
-	cache.randomInstances(500, 0.5f, 20);
+	MESS.push_back(Entity::genCUBE());
+	MESS.push_back(Entity::genPYRAMID());
+	Engine cache;
+	Entity::buildInstances(MESS[0], 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+	Entity::buildInstances(MESS[1],1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
 	//cache.colorDivisor();
-	cache.parseBuffer(mess);
-	cache.sendInstances();
+	cache.parseBuffer(MESS);
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
+	
 	
 	C_Shader myShader;
 	myShader.activate();
@@ -98,6 +104,7 @@ int main() {
 	
 	glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//disable mouse to other window except opengl one
+	
 
 	while (!glfwWindowShouldClose(Apple)) {
 
@@ -114,7 +121,7 @@ int main() {
 
 	
 		dslr.compMatrix();
-		cache.renderVertArray(mess);
+		cache.renderVertArray(MESS);
 		
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
