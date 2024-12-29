@@ -82,12 +82,16 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
+	shapeDATA cube = Entity::genCUBE();
+	shapeDATA piramid = Entity::genPYRAMID();
+	Entity::randomInstances(cube, 50, 0.5f, 20.0f);
+	Entity::randomInstances(piramid, 50, 0.5f, 20.0f);
 
-	MESS.push_back(Entity::genCUBE());
-	MESS.push_back(Entity::genPYRAMID());
+
+
+	MESS.push_back(cube);
+	MESS.push_back(piramid);
 	Engine cache;
-	Entity::buildInstances(MESS[0], 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
-	Entity::buildInstances(MESS[1],1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
 	//cache.colorDivisor();
 	cache.parseBuffer(MESS);
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better

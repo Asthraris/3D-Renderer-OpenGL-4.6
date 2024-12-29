@@ -15,10 +15,9 @@ class Engine
 private :
 	
 public:
-	unsigned int vertexArrayID;
 	unsigned int vertexBufferID;
-	unsigned int instancedBufferID;
 	unsigned int IndexedBufferID;
+	unsigned int instancedBufferID;
 	
 	bufferProperties vertProps;
 	bufferProperties indexProps;
@@ -26,6 +25,7 @@ public:
 	
 	int totalSHAPES;
 	std::vector <int> renderIndexforeachShape;
+	std::vector <unsigned int> ObjectArraysID;
 
 	Engine();
 	void parseBuffer( std::vector <shapeDATA>& MESS);

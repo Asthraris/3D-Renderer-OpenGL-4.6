@@ -2,8 +2,8 @@
 #include "../../utils/shapeDATA.h"
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <cstdlib>
-#include <ctime>
+#include <random>
+
 
 //Update :  yaha par saare pos 1 se 0.5 kiya because cube ka size 2 unit horaha tha since 1 from both side
 
@@ -136,24 +136,30 @@ void Entity::buildROTATIONALInstances(shapeDATA& shape, float scale, float DEGan
 
 void Entity::buildInstances(shapeDATA& shape, float scale, glm::vec3 Position)
 {
-    glm::mat4 temp = glm::mat4(1.0f);
-    temp = glm::scale(temp, glm::vec3(scale));
-    temp = glm::translate(temp, Position);
-    shape.InstanceData.push_back(temp);
+    glm::mat4* temp = new glm::mat4(1.0f);
+    *temp = glm::scale(*temp, glm::vec3(scale));
+    *temp = glm::translate(*temp, Position);
+    shape.InstanceData.push_back(*temp);
+    delete temp; // Clean up the dynamically allocated memory
 
 }
 
+//new random way
 void Entity::randomInstances(shapeDATA& shape, int numINT, float scale, int posMax)
 {
-    srand(time(NULL));
+    static std::random_device rd;  // Seed generator
+    static std::mt19937 gen(rd()); // Mersenne Twister engine
+    std::uniform_real_distribution<float> rotationDist(0.0f, 360.0f);
+    std::uniform_real_distribution<float> positionDist(-float(posMax), float(posMax));
+    std::uniform_real_distribution<float> scaleDist(scale, scale);
 
     glm::mat4 temp;
     for (int i = 0; i < numINT; i++)
     {
         temp = glm::mat4(1.0f);
-        temp = glm::scale(temp, glm::vec3(scale, scale, scale));
-        temp = glm::rotate(temp, glm::radians(float(rand() % 360)), glm::normalize(glm::vec3(float(rand() % 12), float(rand() % 12), float(rand() % 12))));
-        temp = glm::translate(temp, glm::vec3(float(rand() % (posMax * 2) - posMax), float(rand() % (posMax * 2) - posMax), float(rand() % (posMax * 2) - posMax)));
+        temp = glm::scale(temp, glm::vec3(scaleDist(gen), scaleDist(gen), scaleDist(gen)));
+        temp = glm::rotate(temp, glm::radians(rotationDist(gen)), glm::normalize(glm::vec3(positionDist(gen), positionDist(gen), positionDist(gen))));
+        temp = glm::translate(temp, glm::vec3(positionDist(gen), positionDist(gen), positionDist(gen)));
         shape.InstanceData.push_back(temp);
     }
 }
