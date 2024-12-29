@@ -79,14 +79,19 @@ int main() {
 	//specifys clear colour remember not background collor but main colour of window
 
 	shapeDATA mess = genShape::genCUBE();
+	shapeDATA piramid = genShape::genPYRAMID();
 	
 	vertARRAY cache;
-	cache.randomInstances(500, 0.5f, 20);
+	cache.randomInstances(50, 0.5f, 20);
 	//cache.colorDivisor();
 	cache.parseBuffer(mess);
 	cache.sendInstances();
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
+	vertARRAY cache1;
+	cache1.randomInstances(50, 0.5f, 20);
+	cache1.parseBuffer(piramid);
+	cache1.sendInstances();
 	C_Shader myShader;
 	myShader.activate();
 	
@@ -115,6 +120,7 @@ int main() {
 	
 		dslr.compMatrix();
 		cache.renderVertArray(mess);
+		cache1.renderVertArray(piramid);
 		
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
