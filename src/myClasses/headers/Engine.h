@@ -30,7 +30,7 @@ public:
 	Engine();
 	void parseBuffer( std::vector <shapeDATA>& MESS);
 	void colorDivisor();
-
+	void UpdateSINGLEInstancesINGPU(int orderofOBJECT , int orderofINSTANCES , std::vector <shapeDATA>& MESS ,  glm::mat4& upd);
 	void renderVertArray(std::vector <shapeDATA>& MESS);
 	
 	void TRUNCATE();

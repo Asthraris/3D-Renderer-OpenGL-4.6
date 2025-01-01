@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <glm/gtx/string_cast.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 
 
@@ -68,9 +69,10 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
 
         // Set up vertex attributes
         for (size_t i = 0; i < totalSHAPES; i++) {
+
             glBindVertexArray(ObjectArraysID[i]);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexedBufferID);
+            glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
 
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (void*)(vertProps.bufferGAPs[i] + offsetof(VERTEX, POS)));
@@ -109,6 +111,19 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
 void Engine::colorDivisor()
 {
 	glVertexAttribDivisor(1, 1);
+
+}
+
+
+/*
+translation, rotataion and scaling dynamically
+LIMITATION :saare instance of that object will get updated even when change is only wanted on one instaneces*/
+void Engine::UpdateSINGLEInstancesINGPU(int orderofOBJECT,int orderofINSTANCES , std::vector <shapeDATA> & MESS , glm::mat4& upd)
+{
+ 
+    MESS[orderofOBJECT].InstanceData[orderofINSTANCES] = upd;
+    glBindVertexArray(ObjectArraysID[orderofOBJECT]);
+    glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[orderofOBJECT] + (orderofINSTANCES * sizeof(glm::mat4)), sizeof(glm::mat4), glm::value_ptr(MESS[orderofOBJECT].InstanceData[orderofINSTANCES]));
 
 }
 

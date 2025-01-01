@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
 #include<iostream>
 
 
@@ -83,14 +84,21 @@ int main() {
 	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
 	shapeDATA cube = Entity::genCUBE();
+	Entity::buildInstances(cube , 1.0f ,glm::vec3(0.0f , 0.0f , 0.0f));
+	Entity::buildInstances(cube, 1.0f, glm::vec3(0.0f, 0.0f, -3.0f));
+
 	shapeDATA piramid = Entity::genPYRAMID();
-	Entity::randomInstances(cube, 50, 0.5f, 20.0f);
-	Entity::randomInstances(piramid, 50, 0.5f, 20.0f);
+	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
+
+
+
+	
 
 
 
 	MESS.push_back(cube);
 	MESS.push_back(piramid);
+
 	Engine cache;
 	//cache.colorDivisor();
 	cache.parseBuffer(MESS);
@@ -109,7 +117,8 @@ int main() {
 	glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//disable mouse to other window except opengl one
 	
-
+	int rotationDegree = 0;
+	float size =1.0f;
 	while (!glfwWindowShouldClose(Apple)) {
 
 		deltaTime = timeCOUNTER();
@@ -118,13 +127,20 @@ int main() {
 		
 		dslr.CamInputs(Apple, deltaTime);
 		dslr.CamMouseMove(Apple , deltaTime);
+		dslr.compMatrix();
 		
+		glm::mat4 temp = glm::mat4(1.0f);
+
+		temp = glm::rotate(temp, glm::radians(float((rotationDegree++) % 360)), glm::vec3(0.3f, 0.5f, 0.0f));
+		
+		cache.UpdateSINGLEInstancesINGPU(0 , 0 , MESS , temp);
+
+
+	
+
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// previus buffer jo rewrite nhi huwa usko clean karta hai even when new elements is not drawn at top
-
-	
-		dslr.compMatrix();
 		cache.renderVertArray(MESS);
 		
 		glfwSwapBuffers(Apple);
