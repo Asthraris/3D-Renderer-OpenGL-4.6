@@ -7,7 +7,7 @@ class Entity
 public:
     static void deleteShapeData(shapeDATA& data);
     static shapeDATA genTRIANGLE();
-    static shapeDATA genSQUARE();
+    static shapeDATA genPLANE(float width, float height);
     static shapeDATA genCUBE();
     static shapeDATA genPYRAMID();
 

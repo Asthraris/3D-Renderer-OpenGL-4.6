@@ -66,6 +66,14 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
             glBufferSubData(GL_ARRAY_BUFFER, vertProps.bufferGAPs[i], MESS[i].VERTsize(), MESS[i].vertices);
         }
 
+        // Generate and bind instanced buffer
+        glGenBuffers(1, &instancedBufferID);
+        glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
+        glBufferData(GL_ARRAY_BUFFER, InstanceProps.allocateBufferSize, NULL, GL_DYNAMIC_DRAW);
+        for (size_t i = 0; i < totalSHAPES; i++)
+        {
+            glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[i], MESS[i].sizeInstanceinBYTES(), MESS[i].InstanceData.data());
+        }
 
         // Set up vertex attributes
         for (size_t i = 0; i < totalSHAPES; i++) {
@@ -80,27 +88,17 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (void*)(vertProps.bufferGAPs[i] + offsetof(VERTEX, COLOR)));
 
-        }
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (void*)(vertProps.bufferGAPs[i] + offsetof(VERTEX, NORMAL)));
 
-
-        // Generate and bind instanced buffer
-        glGenBuffers(1, &instancedBufferID);
-        glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
-        glBufferData(GL_ARRAY_BUFFER, InstanceProps.allocateBufferSize, NULL, GL_DYNAMIC_DRAW);
-        for (size_t i = 0; i < totalSHAPES; i++)
-        {
-            glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[i], MESS[i].sizeInstanceinBYTES(), MESS[i].InstanceData.data());
-        }
-
-        for (size_t i = 0; i < totalSHAPES; i++) {
-            glBindVertexArray(ObjectArraysID[i]);
             glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
-        
-            for (int j = 2; j <= 5; j++) {
+
+            for (int j = 3; j <= 6; j++) {
                 glEnableVertexAttribArray(j);
                 glVertexAttribPointer(j, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(InstanceProps.bufferGAPs[i] + ((j - 2) * sizeof(glm::vec4))));
                 glVertexAttribDivisor(j, 1);
             }
+
         }
 
         glBindVertexArray(0);
@@ -120,7 +118,10 @@ translation, rotataion and scaling dynamically
 LIMITATION :saare instance of that object will get updated even when change is only wanted on one instaneces*/
 void Engine::UpdateSINGLEInstancesINGPU(int orderofOBJECT,int orderofINSTANCES , std::vector <shapeDATA> & MESS , glm::mat4& upd)
 {
- 
+    if (orderofOBJECT > MESS.size() || orderofINSTANCES > MESS[orderofOBJECT].InstanceData.size()) {
+        std::cout << "Logic error : Objects  OR Instances are less than u provided\n";
+        return ;
+    }
     MESS[orderofOBJECT].InstanceData[orderofINSTANCES] = upd;
     glBindVertexArray(ObjectArraysID[orderofOBJECT]);
     glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[orderofOBJECT] + (orderofINSTANCES * sizeof(glm::mat4)), sizeof(glm::mat4), glm::value_ptr(MESS[orderofOBJECT].InstanceData[orderofINSTANCES]));

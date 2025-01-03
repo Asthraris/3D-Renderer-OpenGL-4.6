@@ -84,20 +84,18 @@ int main() {
 	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
 	shapeDATA cube = Entity::genCUBE();
-	Entity::buildInstances(cube , 1.0f ,glm::vec3(0.0f , 0.0f , 0.0f));
-	Entity::buildInstances(cube, 1.0f, glm::vec3(0.0f, 0.0f, -3.0f));
+	Entity::buildInstances(cube, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
-	shapeDATA piramid = Entity::genPYRAMID();
-	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
 
+	MESS.push_back(cube);
 
 
 	
 
 
 
-	MESS.push_back(cube);
-	MESS.push_back(piramid);
+	C_Shader myShader;
+	myShader.activate();
 
 	Engine cache;
 	//cache.colorDivisor();
@@ -105,16 +103,43 @@ int main() {
 	//itna hosiyari ke jagah me TOTALtiangle bhi use kar sakta tha but wahi hard coded way is not better
 	
 	
-	C_Shader myShader;
-	myShader.activate();
 	
 	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 20.0f , myShader);
+
+	glm::vec3 sunPos = glm::vec3(0.89f, 1.0f, 0.3f);
+	float rayIntensity = 1.0f;
+	float ambientIntensity = 0.1f;
+	glm::vec3 lightColor = glm::vec3(0.6f, 0.0f, 0.3f);
+
+	glUseProgram(myShader.GPUcode);
+
+	GLint sunPosLocation = glGetUniformLocation(myShader.GPUcode, "sunPos");
+	if (sunPosLocation != -1) {
+		glUniform3fv(sunPosLocation, 1, &sunPos[0]);
+	}
+
+	GLint rayIntensityLocation = glGetUniformLocation(myShader.GPUcode, "rayIntensity");
+	if (rayIntensityLocation != -1) {
+		glUniform1f(rayIntensityLocation, rayIntensity);
+	}
+
+	GLint lightColorLocation = glGetUniformLocation(myShader.GPUcode, "lightColor");
+	if (lightColorLocation != -1) {
+		glUniform3fv(lightColorLocation, 1, &lightColor[0]);
+	}
+
+	GLint ambientIntensityLocation = glGetUniformLocation(myShader.GPUcode, "AmbientIntensity");
+	if (ambientIntensityLocation != -1) {
+		glUniform1f(ambientIntensityLocation, ambientIntensity);
+	}
+
+
 
 	glfwSetFramebufferSizeCallback(Apple, window_resizer);
 
 	glfwSetKeyCallback(Apple,pollInput);
 	
-	glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//disable mouse to other window except opengl one
 	
 	int rotationDegree = 0;
@@ -122,18 +147,14 @@ int main() {
 	while (!glfwWindowShouldClose(Apple)) {
 
 		deltaTime = timeCOUNTER();
-		std::cout << 1/deltaTime << "\n";
+		//std::cout << 1/deltaTime << "\n";
 		
 		
 		dslr.CamInputs(Apple, deltaTime);
 		dslr.CamMouseMove(Apple , deltaTime);
 		dslr.compMatrix();
 		
-		glm::mat4 temp = glm::mat4(1.0f);
-
-		temp = glm::rotate(temp, glm::radians(float((rotationDegree++) % 360)), glm::vec3(0.3f, 0.5f, 0.0f));
 		
-		cache.UpdateSINGLEInstancesINGPU(0 , 0 , MESS , temp);
 
 
 	

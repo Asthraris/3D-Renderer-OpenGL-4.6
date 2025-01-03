@@ -12,9 +12,9 @@ shapeDATA Entity::genTRIANGLE()
     shapeDATA ret;
 
     ret.vertices = new VERTEX[3]{
-    {glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},  // Red vertex
-    {glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},  // Green vertex
-    {glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)}    // Blue vertex
+    {glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f) , glm::vec3(0.0f , 1.0f ,0.0f)},  // Red vertex
+    {glm::vec3(0.0f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f) ,glm::vec3(0.0f , 1.0f ,0.0f)},  // Green vertex
+    {glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f) ,glm::vec3(0.0f , 1.0f ,0.0f)}    // Blue vertex
     };
     ret.NUM_POINTS = 3;
     ret.indexes = new unsigned int[3] {0, 1, 2};
@@ -32,17 +32,25 @@ void Entity::deleteShapeData(shapeDATA& data)
  
 }
 
-shapeDATA Entity::genSQUARE()
+shapeDATA Entity::genPLANE(float width, float height)
 {
     shapeDATA sqr;
+
+    float halfWidth = width / 2.0f;
+    float halfHeight = height / 2.0f;
+
+    // Plane vertices and indices
     sqr.vertices = new VERTEX[4]{
-        {glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)},
-        {glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f)},
-        {glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)},
-        {glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(0.0f, 1.0f, 1.0f)},
+        {glm::vec3(-halfWidth, 0.0f, -halfHeight), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Bottom-left
+        {glm::vec3(halfWidth, 0.0f, -halfHeight), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Bottom-right
+        {glm::vec3(halfWidth, 0.0f,  halfHeight), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Top-right
+        {glm::vec3(-halfWidth, 0.0f,  halfHeight), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f, 1.0f, 0.0f)}  // Top-left
     };
+
     sqr.NUM_POINTS = 4;
-    sqr.indexes = new unsigned int [6] {0, 1, 2,0, 2,3};
+
+    sqr.indexes = new unsigned int [6] {0, 1, 2, 0, 2, 3};
+
     sqr.NUM_INDEXES = 6;
     return sqr;
 }
@@ -50,64 +58,110 @@ shapeDATA Entity::genSQUARE()
 shapeDATA Entity::genCUBE()
 {
     shapeDATA cub;
-    cub.vertices = new VERTEX[8]{
-    {glm::vec3(-0.5f, 0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f)}, // Soft Red
-    {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f)}, // Soft Green
-    {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f)}, // Soft Blue
-    {glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f)}, // Soft Cyan
+    cub.vertices = new VERTEX[24]{
+        // Back face (normal: 0, 0, -1)
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Top-left
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Bottom-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Bottom-right
+        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Top-right
 
-    {glm::vec3(-0.5f, 0.5f, 0.5f), glm::vec3(0.7f, 0.2f, 0.2f)},   // Warm Red
-    {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.2f, 0.7f, 0.2f)},  // Warm Green
-    {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.2f, 0.2f, 0.7f)},   // Warm Blue
-    {glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(0.6f, 0.4f, 0.5f)}     // Soft Purple
+        // Front face (normal: 0, 0, 1)
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Top-left
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Bottom-left
+        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Bottom-right
+        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Top-right
+
+        // Left face (normal: -1, 0, 0)
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Top-front
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Bottom-front
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Bottom-back
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Top-back
+
+        // Right face (normal: 1, 0, 0)
+        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Top-front
+        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Bottom-front
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Bottom-back
+        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Top-back
+
+        // Top face (normal: 0, 1, 0)
+        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Back-left
+        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Back-right
+        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Front-right
+        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Front-left
+
+        // Bottom face (normal: 0, -1, 0)
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Back-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Back-right
+        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Front-right
+        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f, -1.0f,  0.0f)}  // Front-left
     };
 
-    cub.NUM_POINTS = 8;
-    cub.indexes = new unsigned int [36] {
-            0,1,2,
-            0,2,3,
 
-            4,5,1,
-            4,1,0,
-
-            3,2,6,
-            3,6,7,
-
-            4,0,3,
-            4,3,7,
-
-            5,1,2,
-            5,2,6,
-
-            7,6,5,
-            7,5,4,
+    cub.NUM_POINTS = 24;
+    cub.indexes = new unsigned int[36] {
+        0, 1, 2, 0, 2, 3,  // Back face
+            4, 5, 6, 4, 6, 7,  // Front face
+            8, 9, 10, 8, 10, 11, // Left face
+            12, 13, 14, 12, 14, 15, // Right face
+            16, 17, 18, 16, 18, 19, // Top face
+            20, 21, 22, 20, 22, 23  // Bottom face
         };
     cub.NUM_INDEXES = 36;
 
     return cub;
 }
-shapeDATA Entity::genPYRAMID()
-{
+shapeDATA Entity::genPYRAMID() {
     shapeDATA pyr;
-    pyr.vertices =new VERTEX[5]{
-        {glm::vec3(0.5f,-0.5f,0.5f),glm::vec3(0.7f,0.0f,0.0f)},
-        {glm::vec3(-0.5f,-0.5f,0.5f),glm::vec3(0.7f,0.0f,0.0f)},
-        {glm::vec3(-0.5f,-0.5f,-0.5f),glm::vec3(0.7f,0.0f,0.0f)},
-        {glm::vec3(0.5f,-0.5f,-0.5f),glm::vec3(0.7f,0.0f,0.0f)},
-        {glm::vec3(0.0f,0.5f,0.0f),glm::vec3(1.0f,1.0f,1.0f)}
+
+    // Define the vertices of the pyramid with per-face normals
+    pyr.vertices = new VERTEX[18]{
+        // Front face
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f)},  // Bottom-right
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f)}, // Bottom-left
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, 0.894f)},    // Apex
+
+        // Left face
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f)}, // Bottom-left
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f)}, // Top-left
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.894f, 0.447f, 0.0f)},    // Apex
+
+        // Back face
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f)}, // Top-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f)},  // Top-right
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, -0.894f)},    // Apex
+
+        // Right face
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f)},  // Top-right
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f)},   // Bottom-right
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.894f, 0.447f, 0.0f)},    // Apex
+
+        // Base face
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},      // Bottom-right
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},     // Bottom-left
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},    // Top-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)}       // Top-right
     };
-pyr.NUM_POINTS =5;
-    pyr.indexes= new unsigned int[18]{
-        0,1,4,
-        1,2,4,
-        2,3,4,
-        0,4,3,
-        0,1,2,
-        0,3,2
-    };
-pyr.NUM_INDEXES =18;
-return pyr;
+
+    pyr.NUM_POINTS = 18;
+
+    // Define the indices for the pyramid
+    pyr.indexes = new unsigned int[18] {
+        // Faces connecting base to the apex
+        0, 1, 2,  // Front face
+            3, 4, 5,  // Left face
+            6, 7, 8,  // Back face
+            9, 10, 11, // Right face
+
+            // Base of the pyramid
+            12, 13, 14, // First triangle
+            12, 14, 15  // Second triangle
+        };
+
+    pyr.NUM_INDEXES = 18;
+
+    return pyr;
 }
+
 
 void Entity::createInstances(shapeDATA& shape, glm::mat4 &demoModel)
 {
