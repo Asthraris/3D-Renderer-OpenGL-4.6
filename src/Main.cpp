@@ -86,8 +86,10 @@ int main() {
 	shapeDATA cube = Entity::genCUBE();
 	Entity::buildInstances(cube, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
 
-
+	shapeDATA piramid = Entity::genPYRAMID();
+	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
 	MESS.push_back(cube);
+	MESS.push_back(piramid);
 
 
 	
@@ -106,10 +108,10 @@ int main() {
 	
 	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 20.0f , myShader);
 
-	glm::vec3 sunPos = glm::vec3(0.89f, 1.0f, 0.3f);
+	glm::vec3 sunPos = glm::vec3(5.0f, 10.0f, 5.0f);
 	float rayIntensity = 1.0f;
 	float ambientIntensity = 0.1f;
-	glm::vec3 lightColor = glm::vec3(0.6f, 0.0f, 0.3f);
+	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	glUseProgram(myShader.GPUcode);
 
@@ -139,7 +141,7 @@ int main() {
 
 	glfwSetKeyCallback(Apple,pollInput);
 	
-	//glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(Apple, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//disable mouse to other window except opengl one
 	
 	int rotationDegree = 0;

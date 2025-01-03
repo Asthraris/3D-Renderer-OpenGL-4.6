@@ -95,7 +95,7 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
 
             for (int j = 3; j <= 6; j++) {
                 glEnableVertexAttribArray(j);
-                glVertexAttribPointer(j, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(InstanceProps.bufferGAPs[i] + ((j - 2) * sizeof(glm::vec4))));
+                glVertexAttribPointer(j, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(InstanceProps.bufferGAPs[i] + ((j - 3) * sizeof(glm::vec4))));
                 glVertexAttribDivisor(j, 1);
             }
 
