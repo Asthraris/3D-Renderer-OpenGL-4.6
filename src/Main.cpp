@@ -84,10 +84,10 @@ int main() {
 	glClearColor(BGcolor.r, BGcolor.g, BGcolor.b, BGcolor.a);
 	//specifys clear colour remember not background collor but main colour of window
 	shapeDATA cube = Entity::genCUBE();
-	Entity::buildInstances(cube, 1.0f, glm::vec3(0.0f, 0.0f, 0.0f));
+	Entity::buildROTATIONALInstances(cube, 1.0f, 45.0f, glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(3.0f, 0.0f , 3.0f));
 
 	shapeDATA piramid = Entity::genPYRAMID();
-	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f, 0.0f, 3.0f));
+	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f,0.0f, -5.0f));
 	MESS.push_back(cube);
 	MESS.push_back(piramid);
 
@@ -108,32 +108,29 @@ int main() {
 	
 	Camera dslr(WINDOW_WIDTH , WINDOW_HEIGHT , 60.0f , 0.1f , 20.0f , myShader);
 
-	glm::vec3 sunPos = glm::vec3(5.0f, 10.0f, 5.0f);
+	glm::vec3 lightDirection =glm::vec3(0.0f, 0.0f, 0.0f);
+
 	float rayIntensity = 1.0f;
-	float ambientIntensity = 0.1f;
+	float ambientIntensity = 0.5f;
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
 	glUseProgram(myShader.GPUcode);
 
-	GLint sunPosLocation = glGetUniformLocation(myShader.GPUcode, "sunPos");
-	if (sunPosLocation != -1) {
-		glUniform3fv(sunPosLocation, 1, &sunPos[0]);
-	}
+	
+	glUniform3fv(glGetUniformLocation(myShader.GPUcode, "sunPos"), 1, &lightDirection[0]);
+	
+	glUniform1f(glGetUniformLocation(myShader.GPUcode, "rayIntensity"), rayIntensity);
 
-	GLint rayIntensityLocation = glGetUniformLocation(myShader.GPUcode, "rayIntensity");
-	if (rayIntensityLocation != -1) {
-		glUniform1f(rayIntensityLocation, rayIntensity);
-	}
+	
+	glUniform3fv(glGetUniformLocation(myShader.GPUcode, "lightColor"), 1, &lightColor[0]);
+	
+	glUniform1f(glGetUniformLocation(myShader.GPUcode, "AmbientIntensity"), ambientIntensity);
 
-	GLint lightColorLocation = glGetUniformLocation(myShader.GPUcode, "lightColor");
-	if (lightColorLocation != -1) {
-		glUniform3fv(lightColorLocation, 1, &lightColor[0]);
-	}
+	
+			
+	
 
-	GLint ambientIntensityLocation = glGetUniformLocation(myShader.GPUcode, "AmbientIntensity");
-	if (ambientIntensityLocation != -1) {
-		glUniform1f(ambientIntensityLocation, ambientIntensity);
-	}
+	
 
 
 

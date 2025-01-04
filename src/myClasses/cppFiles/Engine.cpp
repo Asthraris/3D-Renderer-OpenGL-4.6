@@ -28,19 +28,19 @@ Engine::Engine() :vertexBufferID(0), IndexedBufferID(0) , instancedBufferID(0) ,
 }
 
 //for 3D data or 3point system
-void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
-        totalSHAPES = static_cast<size_t>(MESS.size());
+void Engine::parseBuffer(std::vector <shapeDATA>& EntityContainer) {
+        totalSHAPES = static_cast<size_t>(EntityContainer.size());
 
         // Calculate buffer sizes and offsets
         for (size_t i = 0; i < totalSHAPES; i++) {
-            vertProps.allocateBufferSize += MESS[i].VERTsize() ;
-            indexProps.allocateBufferSize += MESS[i].INDsize() ;
-            InstanceProps.allocateBufferSize += MESS[i].sizeInstanceinBYTES() ;
+            vertProps.allocateBufferSize += EntityContainer[i].VERTsize() ;
+            indexProps.allocateBufferSize += EntityContainer[i].INDsize() ;
+            InstanceProps.allocateBufferSize += EntityContainer[i].sizeInstanceinBYTES() ;
 
             vertProps.bufferGAPs.push_back(vertProps.allocateBufferSize);
             indexProps.bufferGAPs.push_back(indexProps.allocateBufferSize );
             InstanceProps.bufferGAPs.push_back(InstanceProps.allocateBufferSize );
-            renderIndexforeachShape.push_back(MESS[i].NUM_INDEXES);
+            renderIndexforeachShape.push_back(EntityContainer[i].NUM_INDEXES);
         }
         //generate vertarray of objects //here i m doing 1buffer for multiple object not one vertArray
         ObjectArraysID.resize(totalSHAPES);
@@ -54,7 +54,7 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexProps.allocateBufferSize, NULL, GL_DYNAMIC_DRAW);
 
         for (size_t i = 0; i < totalSHAPES; i++) {
-            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexProps.bufferGAPs[i], MESS[i].INDsize(), MESS[i].indexes);
+            glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexProps.bufferGAPs[i], EntityContainer[i].INDsize(), EntityContainer[i].indexes);
         }
 
         // Generate and bind vertex buffer
@@ -63,7 +63,7 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
         glBufferData(GL_ARRAY_BUFFER, vertProps.allocateBufferSize, NULL, GL_DYNAMIC_DRAW);
         //fillup the buffer
         for (size_t i = 0; i < totalSHAPES; i++){
-            glBufferSubData(GL_ARRAY_BUFFER, vertProps.bufferGAPs[i], MESS[i].VERTsize(), MESS[i].vertices);
+            glBufferSubData(GL_ARRAY_BUFFER, vertProps.bufferGAPs[i], EntityContainer[i].VERTsize(), EntityContainer[i].vertices);
         }
 
         // Generate and bind instanced buffer
@@ -72,7 +72,7 @@ void Engine::parseBuffer(std::vector <shapeDATA>& MESS) {
         glBufferData(GL_ARRAY_BUFFER, InstanceProps.allocateBufferSize, NULL, GL_DYNAMIC_DRAW);
         for (size_t i = 0; i < totalSHAPES; i++)
         {
-            glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[i], MESS[i].sizeInstanceinBYTES(), MESS[i].InstanceData.data());
+            glBufferSubData(GL_ARRAY_BUFFER, InstanceProps.bufferGAPs[i], EntityContainer[i].sizeInstanceinBYTES(), EntityContainer[i].InstanceData.data());
         }
 
         // Set up vertex attributes
@@ -130,27 +130,15 @@ void Engine::UpdateSINGLEInstancesINGPU(int orderofOBJECT,int orderofINSTANCES ,
 
 
 
-void Engine::renderVertArray(std::vector <shapeDATA>& MESS)
+void Engine::renderVertArray(std::vector <shapeDATA>& EntityContainer)
 {
 	for (int i = 0; i < totalSHAPES; i++) {
 	    glBindVertexArray(ObjectArraysID[i]);
-        glDrawElementsInstanced(GL_TRIANGLES, renderIndexforeachShape[i], GL_UNSIGNED_INT, (void*)indexProps.bufferGAPs[i], MESS[i].InstanceData.size());
+        glDrawElementsInstanced(GL_TRIANGLES, renderIndexforeachShape[i], GL_UNSIGNED_INT, (void*)indexProps.bufferGAPs[i], EntityContainer[i].InstanceData.size());
         //drawarray sirf vertecis data ko draw karta hai but agar elemnt specify kiya tab gpu indexed buffer read karke uske vertices draw karta hai
 	}
 	glBindVertexArray(0);
 }
-
-
-
-
-void Engine::TRUNCATE()
-{
-	
-	glDeleteBuffers(1, &vertexBufferID);
-	glDeleteBuffers(1, &IndexedBufferID);
-	glDeleteBuffers(1, &instancedBufferID);
-}
-
 
 
 void Engine::DROP()	{
@@ -161,5 +149,6 @@ void Engine::DROP()	{
 	glDeleteBuffers(1 ,&instancedBufferID);
 
 	// Delete vertex array
+    glDeleteVertexArrays(totalSHAPES, ObjectArraysID.data());
 }
 

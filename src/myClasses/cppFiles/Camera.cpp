@@ -3,6 +3,8 @@
 
 #include <glm/gtc/type_ptr.hpp>
 
+
+#include <iostream>
 const float NORMAL_SPEED = 2.5f;
 const float MAXSPEED = 4.0f;
 const float Accelaration = 0.01f;
@@ -28,6 +30,10 @@ Camera::Camera(int width, int height, float fov, float nearplane, float farplane
 	
 
 	projectionMatrix = glm::perspective(FOV, (float)winWidth / (float)winHeight, nearPlane, farPlane);
+
+
+	camPosLOCATION = glGetUniformLocation(shader.GPUcode , "CameraPosition");
+	
 	finalMatLOCATION = glGetUniformLocation(shader.GPUcode, "finalMatrix");
 }
 
@@ -69,6 +75,7 @@ void Camera::compMatrix()
 	//yaha pe stand + focus kiya kyuki if not toh camera along focus rotatehori hai when gettin to left
 	ViewMatrix = projectionMatrix * ViewMatrix;
 	glUniformMatrix4fv(finalMatLOCATION, 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+	glUniform3fv(camPosLOCATION , 1 , &Stand[0] );
 }
 
 void Camera::UpdateProjection(int width, int height)

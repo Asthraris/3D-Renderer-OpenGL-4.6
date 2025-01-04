@@ -28,10 +28,10 @@ public:
 	std::vector <unsigned int> ObjectArraysID;
 
 	Engine();
-	void parseBuffer( std::vector <shapeDATA>& MESS);
+	void parseBuffer( std::vector <shapeDATA>& EntityContainer);
 	void colorDivisor();
 	void UpdateSINGLEInstancesINGPU(int orderofOBJECT , int orderofINSTANCES , std::vector <shapeDATA>& MESS ,  glm::mat4& upd);
-	void renderVertArray(std::vector <shapeDATA>& MESS);
+	void renderVertArray(std::vector <shapeDATA>& EntityContainer);
 	
 	void TRUNCATE();
 	void DROP();

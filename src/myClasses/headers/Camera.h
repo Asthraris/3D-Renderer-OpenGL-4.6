@@ -21,6 +21,7 @@ public:
 
 	float Speed ;
 	int finalMatLOCATION;
+	int camPosLOCATION;
 
 
 	Camera(int width, int height, float fov, float nearplane, float farplane , C_Shader shader);
