@@ -10,10 +10,10 @@
 #include "myClasses/headers/Engine.h"
 #include "myClasses/headers/Entity.h"
 #include "myClasses/headers/Camera.h"
+#include "myClasses/headers/Texture.h"
 
 #include <vector>
 // ab mujhe ek hi vertexArray me multiple shapes store karna hai because switching vertearray is tedius
-
 
 //#include <glm/gtx/string_cast.hpp>
 int WINDOW_WIDTH = 1080;
@@ -43,8 +43,9 @@ void window_resizer(GLFWwindow* window, int width, int height) {
 
 
 int main() {
-	
+	short tick = 0;
 	double deltaTime;
+	int avgFPS =0;
 
 	if (!glfwInit()) {
 		std::cout<<"Failed to initialize GLFW \n";
@@ -88,8 +89,11 @@ int main() {
 
 	shapeDATA piramid = Entity::genPYRAMID();
 	Entity::buildInstances(piramid, 1.0f, glm::vec3(0.0f,0.0f, -5.0f));
+	shapeDATA plane = Entity::genPLANE(10.0f, 10.0f);
+	Entity::buildInstances(plane, 1.0f, glm::vec3(0.0f,-1.0f,0.0f));
 	MESS.push_back(cube);
 	MESS.push_back(piramid);
+	MESS.push_back(plane);
 
 
 	
@@ -114,21 +118,30 @@ int main() {
 	float ambientIntensity = 0.5f;
 	glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 
-	glUseProgram(myShader.GPUcode);
+	glUseProgram(myShader.GLSL);
 
 	
-	glUniform3fv(glGetUniformLocation(myShader.GPUcode, "sunPos"), 1, &lightDirection[0]);
+	glUniform3fv(glGetUniformLocation(myShader.GLSL, "sunPos"), 1, &lightDirection[0]);
 	
-	glUniform1f(glGetUniformLocation(myShader.GPUcode, "rayIntensity"), rayIntensity);
+	glUniform1f(glGetUniformLocation(myShader.GLSL, "rayIntensity"), rayIntensity);
 
 	
-	glUniform3fv(glGetUniformLocation(myShader.GPUcode, "lightColor"), 1, &lightColor[0]);
+	glUniform3fv(glGetUniformLocation(myShader.GLSL, "lightColor"), 1, &lightColor[0]);
 	
-	glUniform1f(glGetUniformLocation(myShader.GPUcode, "AmbientIntensity"), ambientIntensity);
+	glUniform1f(glGetUniformLocation(myShader.GLSL, "AmbientIntensity"), ambientIntensity);
+
+	Texture stone("assets/textures/stone_tiles.jpg");
+
+	Texture marble("assets/textures/marble.png");
+	
+	stone.Bind();
+	marble.Bind(1);
 
 	
-			
-	
+	glUniform1i(glGetUniformLocation(myShader.GLSL, "tex0"), 0);
+	//remember justby changing here 0-1-2 we can switch where gpu should take samples like switch between texture slots we dont need to bind it
+	//this func us very imp it sets gpu sampler as 0th position since i have set previously binded that texture on savestot 0 max 32 my device 16 optimal-8 slots for device
+
 
 	
 
@@ -146,7 +159,11 @@ int main() {
 	while (!glfwWindowShouldClose(Apple)) {
 
 		deltaTime = timeCOUNTER();
-		//std::cout << 1/deltaTime << "\n";
+		if (tick >= 1000) {
+			avgFPS = avgFPS / 1000;
+			glfwSetWindowTitle(Apple, (std::to_string(avgFPS)).c_str());
+			tick = 0;
+		}
 		
 		
 		dslr.CamInputs(Apple, deltaTime);
@@ -166,8 +183,9 @@ int main() {
 		glfwSwapBuffers(Apple);
 		//swaps loaded buffer with present buffer
 		glfwPollEvents();
-		if (ErrorLog())  std::cout << "An OpenGL error occurred!  \n " ; 
-
+		//if (ErrorLog()) { std::cout << "An OpenGL error occurred!  \n ";  }
+		tick += 1;
+		avgFPS += int(1 / deltaTime);
 	}
 	glfwDestroyWindow(Apple);
 

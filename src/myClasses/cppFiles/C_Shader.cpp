@@ -13,7 +13,7 @@ C_Shader::C_Shader()
 	FragShaderSource = loadShaderSource("src/shader/Shader.frag");
 	//file path relative to solution folder not main folder
 
-	GPUcode = CreateShader();
+	GLSL = CreateShader();
 }
 //throws error if compliation is wrong
 bool C_Shader::ErrorCheck(unsigned int type,unsigned int ShaderId)
@@ -35,13 +35,13 @@ bool C_Shader::ErrorCheck(unsigned int type,unsigned int ShaderId)
 //use loaded shader for GPU
 void C_Shader::activate()
 {
-	glUseProgram(GPUcode);
+	glUseProgram(GLSL);
 
 	GLint success;
-	glGetProgramiv(GPUcode, GL_LINK_STATUS, &success);
+	glGetProgramiv(GLSL, GL_LINK_STATUS, &success);
 	if (!success) {
 		char infoLog[512];
-		glGetProgramInfoLog(GPUcode, 512, nullptr, infoLog);
+		glGetProgramInfoLog(GLSL, 512, nullptr, infoLog);
 		std::cout << "Shader Linking Error: " << infoLog << "\n";
 	}
 }
@@ -104,7 +104,7 @@ std::string C_Shader::loadShaderSource(const std::string& filepath) {
 
 void C_Shader::revoke()
 {
-	glDeleteProgram(GPUcode);
+	glDeleteProgram(GLSL);
 
 }
 

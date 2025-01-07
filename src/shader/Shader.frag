@@ -1,6 +1,7 @@
 #version 330 core
 
 in vec3 vertexColor;  // Input from vertex shader
+in vec2 Tex_cordinates;
 in vec3 normal;
 in vec3 currFragPos;
 
@@ -14,7 +15,7 @@ uniform vec3 lightColor;
 
 uniform float AmbientIntensity;
 
-
+uniform sampler2D tex0;
 
 
 
@@ -75,7 +76,7 @@ void main() {
     vec3 lightDirection = normalize(lightPosition - currFragPos);
         
         // Final color combining ambient and diffuse light with the vertex color
-    vec3 finalColor = (calcAmbient()+ calcDiffuse(Normal, lightDirection) + calcSpecular(Normal , lightDirection) ) * lightColor * vertexColor;
+    vec3 finalColor = (calcAmbient()+ calcDiffuse(Normal, lightDirection) + calcSpecular(Normal , lightDirection) ) * lightColor * texture(tex0,Tex_cordinates).rbg;
 
         // Output the final color with full opacity (alpha = 1.0)
     FragColor = vec4(finalColor, 1.0);

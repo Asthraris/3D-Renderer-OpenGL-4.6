@@ -6,7 +6,7 @@ class C_Shader
 {
 private:
 public:
-	unsigned int GPUcode;
+	unsigned int GLSL;
 	std::string FragShaderSource;
 	std::string VertShaderSource;
 

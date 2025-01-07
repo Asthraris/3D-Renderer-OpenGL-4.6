@@ -45,6 +45,9 @@
     <ClInclude Include="dependencies\include\STB\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\myClasses\headers\Texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\myClasses\cppFiles\C_Shader.cpp">
@@ -68,6 +71,9 @@
     <ClCompile Include="src\utils\stb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\myClasses\cppFiles\Texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\glfw3.lib" />
@@ -78,5 +84,13 @@
     <None Include="x64\Debug\Cleansetup.pdb" />
     <None Include="src\shader\Shader.vert" />
     <None Include="src\shader\Shader.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\stone_tiles.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\textures\marble.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -32,9 +32,9 @@ Camera::Camera(int width, int height, float fov, float nearplane, float farplane
 	projectionMatrix = glm::perspective(FOV, (float)winWidth / (float)winHeight, nearPlane, farPlane);
 
 
-	camPosLOCATION = glGetUniformLocation(shader.GPUcode , "CameraPosition");
+	camPosLOCATION = glGetUniformLocation(shader.GLSL, "CameraPosition");
 	
-	finalMatLOCATION = glGetUniformLocation(shader.GPUcode, "finalMatrix");
+	finalMatLOCATION = glGetUniformLocation(shader.GLSL, "finalMatrix");
 }
 
 void Camera::CamInputs(GLFWwindow* window , float deltaTime)

@@ -7,6 +7,14 @@
 
 //Update :  yaha par saare pos 1 se 0.5 kiya because cube ka size 2 unit horaha tha since 1 from both side
 
+void Entity::deleteShapeData(shapeDATA& data)
+{
+    delete[] data.vertices;
+    delete[] data.indexes;
+    data.NUM_POINTS = 0;
+    data.NUM_INDEXES = 0;
+ 
+}
 shapeDATA Entity::genTRIANGLE()
 {
     shapeDATA ret;
@@ -23,35 +31,63 @@ shapeDATA Entity::genTRIANGLE()
     return ret;
 }
 
-void Entity::deleteShapeData(shapeDATA& data)
-{
-    delete[] data.vertices;
-    delete[] data.indexes;
-    data.NUM_POINTS = 0;
-    data.NUM_INDEXES = 0;
- 
-}
-
-shapeDATA Entity::genPLANE(float width, float height)
+shapeDATA Entity::genPLANE(float totalWidth, float totalHeight)
 {
     shapeDATA sqr;
 
-    float halfWidth = width / 2.0f;
-    float halfHeight = height / 2.0f;
+    int gridX = static_cast<int>(totalWidth);  // Number of squares along width
+    int gridY = static_cast<int>(totalHeight); // Number of squares along height
 
-    // Plane vertices and indices
-    sqr.vertices = new VERTEX[4]{
-        {glm::vec3(-halfWidth, 0.0f, -halfHeight), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Bottom-left
-        {glm::vec3(halfWidth, 0.0f, -halfHeight), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Bottom-right
-        {glm::vec3(halfWidth, 0.0f,  halfHeight), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f, 1.0f, 0.0f)}, // Top-right
-        {glm::vec3(-halfWidth, 0.0f,  halfHeight), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f, 1.0f, 0.0f)}  // Top-left
-    };
+    float startX = -totalWidth / 2.0f;  // Center the grid horizontally
+    float startZ = -totalHeight / 2.0f; // Center the grid vertically
 
-    sqr.NUM_POINTS = 4;
+    int numVertices = (gridX + 1) * (gridY + 1);  // Vertices for a grid
+    int numIndices = gridX * gridY * 6;          // 6 indices per square (2 triangles)
 
-    sqr.indexes = new unsigned int [6] {0, 1, 2, 0, 2, 3};
+    // Allocate memory
+    sqr.vertices = new VERTEX[numVertices];
+    sqr.indexes = new unsigned int[numIndices];
 
-    sqr.NUM_INDEXES = 6;
+    int vertexIndex = 0;
+    int indexIndex = 0;
+
+    // Generate vertices and texture coordinates
+    for (int y = 0; y <= gridY; ++y) {
+        for (int x = 0; x <= gridX; ++x) {
+            float posX = startX + x;  // X position of the vertex
+            float posZ = startZ + y;  // Z position of the vertex
+            float texU = static_cast<float>(x);  // Texture coordinate U
+            float texV = static_cast<float>(y);  // Texture coordinate V
+
+            sqr.vertices[vertexIndex++] = {
+                glm::vec3(posX, 0.0f, posZ),     // Position
+                glm::vec3(1.0f, 1.0f, 1.0f),    // Color (white for simplicity)
+                glm::vec3(0.0f, 1.0f, 0.0f),    // Normal
+                glm::vec2(texU, texV)           // Texture coordinates
+            };
+        }
+    }
+
+    // Generate indices
+    for (int y = 0; y < gridY; ++y) {
+        for (int x = 0; x < gridX; ++x) {
+            int topLeft = y * (gridX + 1) + x;
+            int topRight = topLeft + 1;
+            int bottomLeft = topLeft + (gridX + 1);
+            int bottomRight = bottomLeft + 1;
+
+            sqr.indexes[indexIndex++] = topLeft;
+            sqr.indexes[indexIndex++] = bottomLeft;
+            sqr.indexes[indexIndex++] = topRight;
+            sqr.indexes[indexIndex++] = topRight;
+            sqr.indexes[indexIndex++] = bottomLeft;
+            sqr.indexes[indexIndex++] = bottomRight;
+        }
+    }
+
+    sqr.NUM_POINTS = numVertices;
+    sqr.NUM_INDEXES = numIndices;
+
     return sqr;
 }
 
@@ -59,42 +95,44 @@ shapeDATA Entity::genCUBE()
 {
     shapeDATA cub;
     cub.vertices = new VERTEX[24]{
-        // Back face (normal: 0, 0, -1)
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Top-left
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Bottom-left
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Bottom-right
-        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  0.0f, -1.0f)}, // Top-right
+        // Cube vertices with positions, colors, normals, and one texture coordinate
+            // Back face (normal: 0, 0, -1)
+            {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f)}, // Top-left
+            {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f)}, // Bottom-left
+            {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f)}, // Bottom-right
+            {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f)}, // Top-right
 
-        // Front face (normal: 0, 0, 1)
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Top-left
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Bottom-left
-        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Bottom-right
-        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  0.0f,  1.0f)}, // Top-right
+            // Front face (normal: 0, 0, 1)
+            {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f)}, // Top-left
+            {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f)}, // Bottom-left
+            {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f)}, // Bottom-right
+            {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f)}, // Top-right
 
-        // Left face (normal: -1, 0, 0)
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Top-front
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Bottom-front
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Bottom-back
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f)}, // Top-back
+            // Left face (normal: -1, 0, 0)
+            {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)}, // Top-front
+            {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)}, // Bottom-front
+            {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)}, // Bottom-back
+            {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f)}, // Top-back
 
-        // Right face (normal: 1, 0, 0)
-        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Top-front
-        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Bottom-front
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Bottom-back
-        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(1.0f,  0.0f,  0.0f)}, // Top-back
+            // Right face (normal: 1, 0, 0)
+            {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f)}, // Top-front
+            {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f)}, // Bottom-front
+            {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f)}, // Bottom-back
+            {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f)}, // Top-back
 
-        // Top face (normal: 0, 1, 0)
-        {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Back-left
-        {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Back-right
-        {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Front-right
-        {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  1.0f,  0.0f)}, // Front-left
+            // Top face (normal: 0, 1, 0)
+            {glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(1.0f, 0.5f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f)}, // Back-left
+            {glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f, 0.75f, 0.75f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f)}, // Back-right
+            {glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.6f, 0.4f, 0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f)}, // Front-right
+            {glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.7f, 0.2f, 0.2f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f)}, // Front-left
 
-        // Bottom face (normal: 0, -1, 0)
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Back-left
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Back-right
-        {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f, -1.0f,  0.0f)}, // Front-right
-        {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f, -1.0f,  0.0f)}  // Front-left
+            // Bottom face (normal: 0, -1, 0)
+            {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 1.0f, 0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f)}, // Back-left
+            {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.5f, 0.5f, 1.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f)}, // Back-right
+            {glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.2f, 0.7f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f)}, // Front-right
+            {glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.2f, 0.7f, 0.2f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f)}  // Front-left
     };
+
 
 
     cub.NUM_POINTS = 24;
@@ -113,34 +151,34 @@ shapeDATA Entity::genCUBE()
 shapeDATA Entity::genPYRAMID() {
     shapeDATA pyr;
 
-    // Define the vertices of the pyramid with per-face normals
     pyr.vertices = new VERTEX[18]{
         // Front face
-        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f)},  // Bottom-right
-        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f)}, // Bottom-left
-        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, 0.894f)},    // Apex
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f), glm::vec2(1.0f, 0.0f)},  // Bottom-right
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, 0.894f), glm::vec2(0.0f, 0.0f)}, // Bottom-left
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, 0.894f), glm::vec2(0.5f, 1.0f)},    // Apex
 
         // Left face
-        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f)}, // Bottom-left
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f)}, // Top-left
-        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.894f, 0.447f, 0.0f)},    // Apex
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f), glm::vec2(1.0f, 0.0f)}, // Bottom-left
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(-0.894f, 0.447f, 0.0f), glm::vec2(0.0f, 0.0f)}, // Top-left
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(-0.894f, 0.447f, 0.0f), glm::vec2(0.5f, 1.0f)},    // Apex
 
         // Back face
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f)}, // Top-left
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f)},  // Top-right
-        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, -0.894f)},    // Apex
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f), glm::vec2(1.0f, 0.0f)}, // Top-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.0f, 0.447f, -0.894f), glm::vec2(0.0f, 0.0f)},  // Top-right
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.0f, 0.447f, -0.894f), glm::vec2(0.5f, 1.0f)},    // Apex
 
         // Right face
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f)},  // Top-right
-        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f)},   // Bottom-right
-        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.894f, 0.447f, 0.0f)},    // Apex
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f), glm::vec2(1.0f, 0.0f)},  // Top-right
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.7f, 0.0f, 0.0f), glm::vec3(0.894f, 0.447f, 0.0f), glm::vec2(0.0f, 0.0f)},   // Bottom-right
+        {glm::vec3(0.0f, 0.5f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.894f, 0.447f, 0.0f), glm::vec2(0.5f, 1.0f)},    // Apex
 
         // Base face
-        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},      // Bottom-right
-        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},     // Bottom-left
-        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)},    // Top-left
-        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f)}       // Top-right
+        {glm::vec3(0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 1.0f)},      // Bottom-right
+        {glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 1.0f)},     // Bottom-left
+        {glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(0.0f, 0.0f)},    // Top-left
+        {glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, 0.0f, 0.7f), glm::vec3(0.0f, -1.0f, 0.0f), glm::vec2(1.0f, 0.0f)}       // Top-right
     };
+
 
     pyr.NUM_POINTS = 18;
 

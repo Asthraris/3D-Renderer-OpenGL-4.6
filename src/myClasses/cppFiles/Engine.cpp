@@ -91,11 +91,14 @@ void Engine::parseBuffer(std::vector <shapeDATA>& EntityContainer) {
             glEnableVertexAttribArray(2);
             glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (void*)(vertProps.bufferGAPs[i] + offsetof(VERTEX, NORMAL)));
 
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(VERTEX), (void*)(vertProps.bufferGAPs[i] + offsetof(VERTEX, TEXCORDS)));
+
             glBindBuffer(GL_ARRAY_BUFFER, instancedBufferID);
 
-            for (int j = 3; j <= 6; j++) {
+            for (int j = 4; j <= 7; j++) {
                 glEnableVertexAttribArray(j);
-                glVertexAttribPointer(j, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(InstanceProps.bufferGAPs[i] + ((j - 3) * sizeof(glm::vec4))));
+                glVertexAttribPointer(j, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(InstanceProps.bufferGAPs[i] + ((j - 4) * sizeof(glm::vec4))));
                 glVertexAttribDivisor(j, 1);
             }
 
